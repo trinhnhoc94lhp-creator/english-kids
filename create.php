@@ -1,8 +1,8 @@
 <?php
+header('Content-Type: application/json; charset=utf-8');
 ini_set('display_errors', 1);
 error_reporting(E_ALL);
 
-header('Content-Type: application/json; charset=utf-8');
 require_once '../db.php';
 
 if (!isset($conn) || !$conn) {
@@ -15,8 +15,7 @@ if (!isset($conn) || !$conn) {
 
 $name = trim($_POST['name'] ?? '');
 $phone = trim($_POST['phone'] ?? '');
-$email = trim($_POST['email'] ?? '');
-$subject = trim($_POST['subject'] ?? '');
+$grade = trim($_POST['grade'] ?? '');
 $birthday = trim($_POST['birthday'] ?? '');
 $gender = trim($_POST['gender'] ?? '');
 $city = trim($_POST['city'] ?? '');
@@ -24,9 +23,10 @@ $district = trim($_POST['district'] ?? '');
 $ward = trim($_POST['ward'] ?? '');
 $addressDetail = trim($_POST['addressDetail'] ?? '');
 $address = trim($_POST['address'] ?? '');
-$status = trim($_POST['status'] ?? 'active');
+$studentCode = trim($_POST['studentCode'] ?? '');
+$note = trim($_POST['note'] ?? '');
 
-if ($name === '' || $phone === '' || $email === '' || $birthday === '') {
+if ($name === '' || $grade === '' || $studentCode === '') {
     echo json_encode([
         'success' => false,
         'message' => 'Thiếu thông tin bắt buộc'
@@ -34,12 +34,7 @@ if ($name === '' || $phone === '' || $email === '' || $birthday === '') {
     exit;
 }
 
-$allowedStatuses = ['active', 'suspended', 'inactive'];
-if (!in_array($status, $allowedStatuses, true)) {
-    $status = 'active';
-}
-
-$check = $conn->prepare("SELECT id FROM qlgiaovien_teachers WHERE email = ? LIMIT 1");
+$check = $conn->prepare("SELECT id FROM qlhocsinh_students WHERE student_code = ? LIMIT 1");
 if (!$check) {
     echo json_encode([
         'success' => false,
@@ -48,7 +43,7 @@ if (!$check) {
     exit;
 }
 
-$check->bind_param("s", $email);
+$check->bind_param("s", $studentCode);
 $check->execute();
 $result = $check->get_result();
 $exists = $result ? $result->fetch_assoc() : null;
@@ -57,34 +52,16 @@ $check->close();
 if ($exists) {
     echo json_encode([
         'success' => false,
-        'message' => 'Email đã tồn tại'
+        'message' => 'Mã học sinh đã tồn tại'
     ], JSON_UNESCAPED_UNICODE);
     exit;
 }
 
-$teacherCode = 'GV' . time();
-
-$sql = "INSERT INTO qlgiaovien_teachers (
-    teacher_code,
-    teacherCode,
-    name,
-    subject,
-    city,
-    district,
-    ward,
-    address_detail,
-    full_address,
-    birthday,
-    gender,
-    phone,
-    email,
-    status_text,
-    status,
-    created_at,
-    createdAt
-) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, NOW(), NOW())";
-
-$stmt = $conn->prepare($sql);
+$stmt = $conn->prepare("
+    INSERT INTO qlhocsinh_students
+    (name, phone, grade, birthday, gender, city, district, ward, address_detail, address, student_code, note, created_at)
+    VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, NOW())
+");
 
 if (!$stmt) {
     echo json_encode([
@@ -94,33 +71,26 @@ if (!$stmt) {
     exit;
 }
 
-$statusText = ($status === 'suspended') ? 'Đình chỉ' : (($status === 'inactive') ? 'Ngưng hoạt động' : 'Đang hoạt động');
-
-$fullAddress = $address;
-
 $stmt->bind_param(
-    "sssssssssssssss",
-    $teacherCode,
-    $teacherCode,
+    "ssssssssssss",
     $name,
-    $subject,
+    $phone,
+    $grade,
+    $birthday,
+    $gender,
     $city,
     $district,
     $ward,
     $addressDetail,
-    $fullAddress,
-    $birthday,
-    $gender,
-    $phone,
-    $email,
-    $statusText,
-    $status
+    $address,
+    $studentCode,
+    $note
 );
 
 if ($stmt->execute()) {
     echo json_encode([
         'success' => true,
-        'message' => 'Thêm giáo viên thành công'
+        'message' => 'Đã lưu học sinh'
     ], JSON_UNESCAPED_UNICODE);
 } else {
     echo json_encode([

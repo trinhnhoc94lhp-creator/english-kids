@@ -1,24 +1,11 @@
 <?php
-ini_set('display_errors', 1);
-error_reporting(E_ALL);
-
 header('Content-Type: application/json; charset=utf-8');
 require_once '../db.php';
 
-if (!isset($conn) || !$conn) {
-    echo json_encode([
-        'success' => false,
-        'message' => 'Không kết nối được database'
-    ], JSON_UNESCAPED_UNICODE);
-    exit;
-}
-
-$id = isset($_POST['id']) ? (int)$_POST['id'] : 0;
-
+$id = (int)($_POST['id'] ?? 0);
 $name = trim($_POST['name'] ?? '');
 $phone = trim($_POST['phone'] ?? '');
-$email = trim($_POST['email'] ?? '');
-$subject = trim($_POST['subject'] ?? '');
+$grade = trim($_POST['grade'] ?? '');
 $birthday = trim($_POST['birthday'] ?? '');
 $gender = trim($_POST['gender'] ?? '');
 $city = trim($_POST['city'] ?? '');
@@ -26,38 +13,45 @@ $district = trim($_POST['district'] ?? '');
 $ward = trim($_POST['ward'] ?? '');
 $addressDetail = trim($_POST['addressDetail'] ?? '');
 $address = trim($_POST['address'] ?? '');
+$studentCode = trim($_POST['studentCode'] ?? '');
+$note = trim($_POST['note'] ?? '');
 
-if ($id <= 0) {
+if ($id <= 0 || $name === '' || $grade === '' || $studentCode === '') {
     echo json_encode([
         'success' => false,
-        'message' => 'Thiếu ID giáo viên'
+        'message' => 'Thiếu dữ liệu cập nhật'
     ], JSON_UNESCAPED_UNICODE);
     exit;
 }
 
-if ($name === '' || $phone === '' || $email === '' || $birthday === '') {
+$check = $conn->prepare("SELECT id FROM qlhocsinh_students WHERE student_code = ? AND id <> ? LIMIT 1");
+if (!$check) {
     echo json_encode([
         'success' => false,
-        'message' => 'Thiếu thông tin bắt buộc'
+        'message' => 'Lỗi prepare check: ' . $conn->error
     ], JSON_UNESCAPED_UNICODE);
     exit;
 }
 
-$sql = "UPDATE qlgiaovien_teachers
-        SET name = ?,
-            subject = ?,
-            city = ?,
-            district = ?,
-            ward = ?,
-            address_detail = ?,
-            full_address = ?,
-            birthday = ?,
-            gender = ?,
-            phone = ?,
-            email = ?
-        WHERE id = ?";
+$check->bind_param("si", $studentCode, $id);
+$check->execute();
+$result = $check->get_result();
+$exists = $result ? $result->fetch_assoc() : null;
+$check->close();
 
-$stmt = $conn->prepare($sql);
+if ($exists) {
+    echo json_encode([
+        'success' => false,
+        'message' => 'Mã học sinh đã tồn tại'
+    ], JSON_UNESCAPED_UNICODE);
+    exit;
+}
+
+$stmt = $conn->prepare("
+    UPDATE qlhocsinh_students
+    SET name = ?, phone = ?, grade = ?, birthday = ?, gender = ?, city = ?, district = ?, ward = ?, address_detail = ?, address = ?, student_code = ?, note = ?
+    WHERE id = ?
+");
 
 if (!$stmt) {
     echo json_encode([
@@ -68,25 +62,26 @@ if (!$stmt) {
 }
 
 $stmt->bind_param(
-    "sssssssssssi",
+    "ssssssssssssi",
     $name,
-    $subject,
+    $phone,
+    $grade,
+    $birthday,
+    $gender,
     $city,
     $district,
     $ward,
     $addressDetail,
     $address,
-    $birthday,
-    $gender,
-    $phone,
-    $email,
+    $studentCode,
+    $note,
     $id
 );
 
 if ($stmt->execute()) {
     echo json_encode([
         'success' => true,
-        'message' => 'Cập nhật giáo viên thành công'
+        'message' => 'Đã cập nhật học sinh'
     ], JSON_UNESCAPED_UNICODE);
 } else {
     echo json_encode([
