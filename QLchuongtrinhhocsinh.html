@@ -1,0 +1,1240 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>QL Chương trình học sinh</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+  <style>
+    *{margin:0;padding:0;box-sizing:border-box;font-family:'Inter',sans-serif}
+
+    :root{
+      --primary:#2563eb;
+      --primary-2:#4f46e5;
+      --cyan:#06b6d4;
+      --green:#16a34a;
+      --orange:#ea580c;
+      --red:#ef4444;
+      --text:#0f172a;
+      --muted:#64748b;
+      --line:#e5eef8;
+      --soft:#eef5ff;
+      --bg:#f4f7fb;
+      --shadow-soft:0 10px 30px rgba(15,23,42,.06);
+    }
+
+    body{
+      display:flex;
+      min-height:100vh;
+      color:var(--text);
+      background:
+        radial-gradient(circle at top left, rgba(37,99,235,.08), transparent 26%),
+        radial-gradient(circle at top right, rgba(124,58,237,.08), transparent 20%),
+        var(--bg);
+    }
+
+    .sidebar{
+      width:280px;
+      background:rgba(255,255,255,.88);
+      backdrop-filter:blur(10px);
+      border-right:1px solid rgba(226,232,240,.9);
+      padding:24px 18px;
+      position:sticky;
+      top:0;
+      height:100vh;
+      flex-shrink:0;
+      z-index:5;
+    }
+
+    .brand{
+      display:flex;
+      align-items:center;
+      gap:14px;
+      padding:14px;
+      border-radius:22px;
+      background:linear-gradient(135deg, rgba(37,99,235,.10), rgba(79,70,229,.08));
+      margin-bottom:28px;
+      border:1px solid rgba(191,219,254,.6);
+    }
+
+    .brand-mark{
+      width:56px;
+      height:56px;
+      border-radius:18px;
+      background:linear-gradient(135deg,var(--primary),var(--primary-2));
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      color:#fff;
+      font-size:22px;
+      font-weight:900;
+      box-shadow:0 12px 28px rgba(37,99,235,.24);
+      flex-shrink:0;
+    }
+
+    .brand-text strong{
+      display:block;
+      font-size:18px;
+      font-weight:800;
+      letter-spacing:-.02em;
+    }
+
+    .brand-text span{
+      display:block;
+      font-size:12px;
+      color:var(--muted);
+      margin-top:4px;
+    }
+
+    .menu-wrap{position:relative}
+    .menu{list-style:none;position:relative}
+    .menu a{text-decoration:none;color:inherit;display:block}
+
+    .menu li{
+      padding:14px 16px;
+      margin-bottom:8px;
+      border-radius:16px;
+      color:var(--muted);
+      font-weight:600;
+      cursor:pointer;
+      transition:.25s ease;
+    }
+
+    .menu li:hover{
+      background:var(--soft);
+      color:var(--primary);
+      transform:translateX(2px);
+    }
+
+    .menu li.active{
+      background:linear-gradient(90deg, rgba(37,99,235,.14), rgba(79,70,229,.10));
+      color:var(--primary);
+      box-shadow:inset 0 0 0 1px rgba(147,197,253,.35);
+    }
+
+    .active-bar{
+      position:absolute;
+      left:-18px;
+      width:5px;
+      height:42px;
+      border-radius:0 8px 8px 0;
+      background:linear-gradient(180deg,var(--primary),var(--primary-2));
+      transition:.3s;
+    }
+
+    .main{
+      flex:1;
+      padding:28px;
+      overflow-y:auto;
+    }
+
+    .topbar{
+      display:flex;
+      justify-content:space-between;
+      align-items:center;
+      gap:16px;
+      flex-wrap:wrap;
+      margin-bottom:24px;
+    }
+
+    .page-title h1{
+      font-size:30px;
+      font-weight:900;
+      letter-spacing:-.03em;
+      margin-bottom:6px;
+    }
+
+    .page-title p{
+      font-size:14px;
+      color:var(--muted);
+      line-height:1.7;
+    }
+
+    .topbar-right{
+      display:flex;
+      align-items:center;
+      gap:14px;
+      flex-wrap:wrap;
+    }
+
+    .search-top{position:relative}
+
+    .search-top input{
+      width:320px;
+      height:48px;
+      border:1px solid var(--line);
+      border-radius:16px;
+      padding:0 14px 0 42px;
+      outline:none;
+      background:rgba(255,255,255,.92);
+      font-size:14px;
+      box-shadow:var(--shadow-soft);
+    }
+
+    .search-top input:focus{
+      border-color:#93c5fd;
+      box-shadow:0 0 0 4px rgba(59,130,246,.08);
+    }
+
+    .search-top span{
+      position:absolute;
+      left:14px;
+      top:50%;
+      transform:translateY(-50%);
+      color:#94a3b8;
+      font-size:15px;
+    }
+
+    .avatar-box{position:relative;cursor:pointer}
+
+    .avatar{
+      width:46px;
+      height:46px;
+      border-radius:16px;
+      background:linear-gradient(135deg,var(--primary),var(--primary-2));
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      color:#fff;
+      font-weight:800;
+      box-shadow:0 12px 28px rgba(59,130,246,.22);
+    }
+
+    .dropdown{
+      position:absolute;
+      top:58px;
+      right:0;
+      background:white;
+      border-radius:16px;
+      box-shadow:0 18px 40px rgba(15,23,42,.14);
+      display:none;
+      padding:12px;
+      min-width:200px;
+      z-index:100;
+      border:1px solid #eef2f7;
+    }
+
+    .dropdown.show{display:block}
+
+    .dropdown label{
+      display:block;
+      font-size:13px;
+      font-weight:700;
+      color:#334155;
+      margin-bottom:8px;
+    }
+
+    .dropdown select{
+      width:100%;
+      height:44px;
+      border:1px solid #dbeafe;
+      border-radius:12px;
+      padding:0 12px;
+      margin-bottom:10px;
+      background:#f8fbff;
+      outline:none;
+    }
+
+    .dropdown button{
+      width:100%;
+      border:none;
+      background:none;
+      cursor:pointer;
+      padding:10px 12px;
+      color:var(--red);
+      font-weight:700;
+      border-radius:10px;
+      text-align:left;
+    }
+
+    .dropdown button:hover{background:#fef2f2}
+
+    .hero{
+      position:relative;
+      overflow:hidden;
+      background:linear-gradient(135deg,#1d4ed8 0%,#4338ca 55%,#7c3aed 100%);
+      border-radius:32px;
+      padding:32px;
+      display:grid;
+      grid-template-columns:1.2fr .8fr;
+      gap:22px;
+      color:white;
+      box-shadow:0 24px 60px rgba(37,99,235,.23);
+      margin-bottom:24px;
+      align-items:center;
+    }
+
+    .hero::before{
+      content:'';
+      position:absolute;
+      width:260px;
+      height:260px;
+      border-radius:50%;
+      background:rgba(255,255,255,.08);
+      right:-70px;
+      top:-90px;
+    }
+
+    .hero::after{
+      content:'';
+      position:absolute;
+      width:180px;
+      height:180px;
+      border-radius:50%;
+      background:rgba(255,255,255,.08);
+      left:-50px;
+      bottom:-60px;
+    }
+
+    .hero-content,.hero-side{position:relative;z-index:1}
+
+    .hero-badge{
+      display:inline-flex;
+      align-items:center;
+      gap:8px;
+      padding:9px 14px;
+      border-radius:999px;
+      background:rgba(255,255,255,.14);
+      border:1px solid rgba(255,255,255,.18);
+      font-size:12px;
+      font-weight:800;
+      margin-bottom:16px;
+    }
+
+    .hero-content h2{
+      font-size:34px;
+      font-weight:900;
+      margin-bottom:12px;
+      line-height:1.2;
+      letter-spacing:-.03em;
+    }
+
+    .hero-content p{
+      font-size:15px;
+      line-height:1.8;
+      opacity:.96;
+      max-width:620px;
+    }
+
+    .hero-mini-grid{
+      display:grid;
+      grid-template-columns:1fr 1fr;
+      gap:12px;
+    }
+
+    .hero-mini{
+      padding:16px;
+      border-radius:20px;
+      background:rgba(255,255,255,.12);
+      border:1px solid rgba(255,255,255,.18);
+      backdrop-filter:blur(8px);
+    }
+
+    .hero-mini strong{
+      display:block;
+      font-size:24px;
+      font-weight:900;
+      margin-bottom:6px;
+    }
+
+    .hero-mini span{
+      font-size:13px;
+      line-height:1.6;
+      opacity:.95;
+    }
+
+    .stats{
+      display:grid;
+      grid-template-columns:repeat(4,1fr);
+      gap:18px;
+      margin-bottom:24px;
+    }
+
+    .stat-card{
+      background:rgba(255,255,255,.92);
+      border-radius:24px;
+      padding:22px;
+      box-shadow:var(--shadow-soft);
+      position:relative;
+      overflow:hidden;
+      border:1px solid #eef2f7;
+    }
+
+    .stat-card::before{
+      content:'';
+      position:absolute;
+      top:0;
+      left:0;
+      right:0;
+      height:4px;
+      background:linear-gradient(90deg,var(--primary),var(--primary-2),var(--cyan));
+    }
+
+    .stat-label{
+      font-size:14px;
+      color:var(--muted);
+      margin-bottom:8px;
+      font-weight:600;
+    }
+
+    .stat-value{
+      font-size:30px;
+      font-weight:900;
+      color:var(--text);
+      margin-bottom:6px;
+      letter-spacing:-.04em;
+    }
+
+    .stat-sub{
+      font-size:13px;
+      color:#64748b;
+      line-height:1.6;
+    }
+
+    .card{
+      background:rgba(255,255,255,.94);
+      border-radius:26px;
+      padding:22px;
+      box-shadow:var(--shadow-soft);
+      border:1px solid #eef2f7;
+    }
+
+    .card-header{
+      display:flex;
+      justify-content:space-between;
+      align-items:center;
+      margin-bottom:18px;
+      gap:12px;
+      flex-wrap:wrap;
+    }
+
+    .card-title{
+      font-size:18px;
+      font-weight:800;
+    }
+
+    .toolbar{
+      display:grid;
+      grid-template-columns:1fr 190px 190px;
+      gap:12px;
+      margin-bottom:18px;
+    }
+
+    .toolbar input,.toolbar select{
+      width:100%;
+      height:48px;
+      border:1px solid #dbe2ea;
+      border-radius:16px;
+      padding:0 14px;
+      font-size:14px;
+      outline:none;
+      background:white;
+    }
+
+    .toolbar input:focus,.toolbar select:focus{
+      border-color:#93c5fd;
+      box-shadow:0 0 0 4px rgba(59,130,246,.08);
+    }
+
+    .table-wrap{
+      overflow:auto;
+      border-radius:20px;
+      border:1px solid #eef2f7;
+    }
+
+    table{
+      width:100%;
+      border-collapse:collapse;
+      background:white;
+      min-width:1080px;
+    }
+
+    th,td{
+      padding:14px 16px;
+      text-align:left;
+      border-bottom:1px solid #eef2f7;
+      vertical-align:middle;
+    }
+
+    th{
+      background:#f8fafc;
+      font-size:13px;
+      text-transform:uppercase;
+      letter-spacing:.4px;
+      color:#64748b;
+      font-weight:800;
+    }
+
+    td{
+      font-size:14px;
+      color:#0f172a;
+    }
+
+    tr:hover td{background:#fbfdff}
+
+    .program-img{
+      width:68px;
+      height:46px;
+      object-fit:cover;
+      border-radius:12px;
+      border:1px solid #e5e7eb;
+      background:#f8fafc;
+    }
+
+    .program-name{
+      font-weight:800;
+      margin-bottom:4px;
+    }
+
+    .program-desc{
+      font-size:12px;
+      color:#64748b;
+      line-height:1.6;
+      max-width:280px;
+    }
+
+    .pill{
+      display:inline-flex;
+      padding:8px 12px;
+      border-radius:999px;
+      font-size:12px;
+      font-weight:800;
+    }
+
+    .pill.blue{background:#dbeafe;color:#1d4ed8}
+    .pill.green{background:#dcfce7;color:#15803d}
+    .pill.orange{background:#ffedd5;color:#c2410c}
+    .pill.purple{background:#ede9fe;color:#7c3aed}
+    .pill.gray{background:#e2e8f0;color:#475569}
+
+    .actions{
+      display:flex;
+      gap:8px;
+      flex-wrap:wrap;
+    }
+
+    .icon-btn{
+      min-width:36px;
+      height:36px;
+      border:none;
+      border-radius:10px;
+      cursor:pointer;
+      background:#f8fafc;
+      font-size:16px;
+      transition:.2s;
+      padding:0 10px;
+      font-weight:700;
+    }
+
+    .icon-btn:hover{background:#eff6ff}
+
+    .icon-btn.primary{
+      background:#2563eb;
+      color:white;
+    }
+
+    .icon-btn.primary:hover{
+      background:#1d4ed8;
+    }
+
+    .empty-box{
+      padding:32px;
+      border-radius:18px;
+      border:1px dashed #cbd5e1;
+      background:#f8fafc;
+      text-align:center;
+      color:var(--muted);
+      font-size:14px;
+      line-height:1.8;
+    }
+
+    .modal{
+      position:fixed;
+      inset:0;
+      background:rgba(15,23,42,.45);
+      display:none;
+      align-items:center;
+      justify-content:center;
+      z-index:999;
+      padding:20px;
+    }
+
+    .modal.show{display:flex}
+
+    .modal-box{
+      width:860px;
+      max-width:96vw;
+      max-height:90vh;
+      overflow:auto;
+      background:white;
+      border-radius:24px;
+      padding:24px;
+      box-shadow:0 24px 50px rgba(0,0,0,.18);
+    }
+
+    .modal-header{
+      display:flex;
+      justify-content:space-between;
+      gap:12px;
+      align-items:flex-start;
+      margin-bottom:16px;
+    }
+
+    .modal-title{
+      font-size:26px;
+      font-weight:800;
+      color:#0f172a;
+      margin-bottom:8px;
+    }
+
+    .close-btn{
+      border:none;
+      background:#f1f5f9;
+      width:40px;
+      height:40px;
+      border-radius:12px;
+      font-size:18px;
+      cursor:pointer;
+    }
+
+    .detail-cover{
+      width:100%;
+      height:220px;
+      border-radius:20px;
+      overflow:hidden;
+      background:#eef4ff;
+      margin-bottom:18px;
+      display:flex;
+      align-items:center;
+      justify-content:center;
+    }
+
+    .detail-cover img{
+      width:100%;
+      height:100%;
+      object-fit:cover;
+    }
+
+    .detail-info{
+      display:grid;
+      grid-template-columns:repeat(4,1fr);
+      gap:12px;
+      margin-bottom:18px;
+    }
+
+    .detail-info .item{
+      background:#f8fafc;
+      border-radius:14px;
+      padding:14px;
+    }
+
+    .detail-info .item strong{
+      display:block;
+      font-size:12px;
+      color:#64748b;
+      margin-bottom:6px;
+      text-transform:uppercase;
+      letter-spacing:.4px;
+    }
+
+    .detail-info .item span{
+      font-size:15px;
+      font-weight:700;
+      color:#0f172a;
+    }
+
+    .detail-section{
+      margin-bottom:18px;
+    }
+
+    .detail-section h3{
+      font-size:18px;
+      margin-bottom:10px;
+      color:#2563eb;
+    }
+
+    .detail-section p{
+      color:#64748b;
+      line-height:1.8;
+      font-size:14px;
+    }
+
+    .content-list{
+      display:grid;
+      gap:10px;
+    }
+
+    .content-item{
+      background:#f8fbff;
+      border:1px solid #e2e8f0;
+      border-radius:14px;
+      padding:14px;
+      color:#334155;
+      font-size:14px;
+      line-height:1.7;
+    }
+
+    .modal-actions{
+      display:flex;
+      justify-content:flex-end;
+      gap:10px;
+      flex-wrap:wrap;
+      margin-top:8px;
+    }
+
+    .btn{
+      border:none;
+      padding:11px 14px;
+      border-radius:12px;
+      font-weight:700;
+      cursor:pointer;
+      transition:0.25s;
+      font-size:14px;
+    }
+
+    .btn-view{
+      background:#eff6ff;
+      color:#2563eb;
+    }
+
+    .btn-study{
+      background:#3b82f6;
+      color:white;
+    }
+
+    .btn-study:hover{
+      background:#2563eb;
+    }
+
+    @media (max-width:1200px){
+      .stats{grid-template-columns:repeat(2,1fr)}
+      .hero{grid-template-columns:1fr}
+      .toolbar{grid-template-columns:1fr 1fr}
+      .detail-info{grid-template-columns:1fr 1fr}
+    }
+
+    @media (max-width:768px){
+      body{flex-direction:column}
+      .sidebar{width:100%;height:auto;position:relative}
+      .main{padding:18px}
+      .topbar{flex-direction:column;align-items:flex-start}
+      .topbar-right{width:100%;justify-content:space-between}
+      .search-top{width:100%}
+      .search-top input{width:100%}
+      .stats,.toolbar,.hero-mini-grid,.detail-info{grid-template-columns:1fr}
+      .page-title h1{font-size:24px}
+      .hero-content h2{font-size:28px}
+    }
+  </style>
+</head>
+<body>
+  <aside class="sidebar">
+    <div class="brand">
+      <div class="brand-mark">EF</div>
+      <div class="brand-text">
+        <strong>English for Kids</strong>
+        <span>Learning with joy</span>
+      </div>
+    </div>
+
+    <div class="menu-wrap">
+      <div class="active-bar" id="activeBar"></div>
+      <ul class="menu" id="menu">
+        <a href="trangchuhocsinh.html"><li>Trang chủ</li></a>
+        <a href="QLchuongtrinhhocsinh.html"><li class="active">Chương trình học</li></a>
+        <a href="QLbaitaphocsinh.html"><li>Bài tập</li></a>
+        <a href="thongtin.html"><li>Thông tin cá nhân</li></a>
+      </ul>
+    </div>
+  </aside>
+
+  <main class="main">
+    <div class="topbar">
+      <div class="page-title">
+        <h1 id="welcomeName">Chương trình học</h1>
+        <p id="welcomeText">Đang tải dữ liệu chương trình học cho học sinh...</p>
+      </div>
+
+      <div class="topbar-right">
+        <div class="search-top">
+          <span>🔍</span>
+          <input type="text" id="searchInput" placeholder="Tìm chương trình theo tên, môn học, khối..." oninput="renderPrograms()">
+        </div>
+
+        <div class="avatar-box" onclick="toggleMenu(event)">
+          <div class="avatar" id="studentAvatar">HS</div>
+          <div class="dropdown" id="dropdownMenu">
+            <label for="gradeSelect">Chọn lớp</label>
+            <select id="gradeSelect" onchange="changeGrade(this.value)">
+              <option value="Lớp 1">Lớp 1</option>
+              <option value="Lớp 2">Lớp 2</option>
+              <option value="Lớp 3">Lớp 3</option>
+              <option value="Lớp 4">Lớp 4</option>
+              <option value="Lớp 5">Lớp 5</option>
+            </select>
+            <button onclick="confirmLogout(); event.stopPropagation();">Đăng xuất</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <section class="hero">
+      <div class="hero-content">
+        <div class="hero-badge">📘 Chương trình học dành cho học sinh</div>
+        <h2>Khám phá chương trình học phù hợp với khối lớp của em</h2>
+        <p>Trang này hiển thị chương trình từ quản trị viên và giáo viên, đúng theo khối lớp đang chọn. Khi bấm bắt đầu học sẽ chuyển sang trang nhập liệu học sinh.</p>
+      </div>
+
+      <div class="hero-side">
+        <div class="hero-mini-grid">
+          <div class="hero-mini">
+            <strong id="heroGrade">1</strong>
+            <span id="heroGradeText">Đang hiển thị nội dung cho Lớp 1</span>
+          </div>
+          <div class="hero-mini">
+            <strong id="heroProgramCount">0</strong>
+            <span>Tổng chương trình phù hợp</span>
+          </div>
+          <div class="hero-mini">
+            <strong id="heroAdminCount">0</strong>
+            <span>Từ quản trị viên</span>
+          </div>
+          <div class="hero-mini">
+            <strong id="heroTeacherCount">0</strong>
+            <span>Từ giáo viên</span>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="stats">
+      <div class="stat-card">
+        <div class="stat-label">Tổng chương trình</div>
+        <div class="stat-value" id="totalPrograms">0</div>
+        <div class="stat-sub">Số chương trình phù hợp với lớp hiện tại.</div>
+      </div>
+
+      <div class="stat-card">
+        <div class="stat-label">Từ quản trị viên</div>
+        <div class="stat-value" id="adminPrograms">0</div>
+        <div class="stat-sub">Chương trình từ hệ thống quản trị.</div>
+      </div>
+
+      <div class="stat-card">
+        <div class="stat-label">Từ giáo viên</div>
+        <div class="stat-value" id="teacherPrograms">0</div>
+        <div class="stat-sub">Chương trình được tạo từ giáo viên.</div>
+      </div>
+
+      <div class="stat-card">
+        <div class="stat-label">Nội dung học</div>
+        <div class="stat-value" id="totalContents">0</div>
+        <div class="stat-sub">Tổng số mục nội dung hiện có.</div>
+      </div>
+    </section>
+
+    <section class="card">
+      <div class="card-header">
+        <div class="card-title">Danh sách chương trình học</div>
+      </div>
+
+      <div class="toolbar">
+        <select id="sourceFilter" onchange="renderPrograms()">
+          <option value="all">Tất cả nguồn</option>
+          <option value="admin">Quản trị viên</option>
+          <option value="teacher">Giáo viên</option>
+        </select>
+
+        <select id="subjectFilter" onchange="renderPrograms()">
+          <option value="all">Tất cả môn</option>
+          <option value="Tiếng Anh">Tiếng Anh</option>
+          <option value="Toán">Toán</option>
+          <option value="Khoa học">Khoa học</option>
+        </select>
+
+        <select id="sortFilter" onchange="renderPrograms()">
+          <option value="newest">Mới nhất</option>
+          <option value="az">A - Z</option>
+          <option value="contents">Nhiều nội dung</option>
+        </select>
+      </div>
+
+      <div id="tableContainer"></div>
+    </section>
+  </main>
+
+  <div class="modal" id="detailModal">
+    <div class="modal-box">
+      <div class="modal-header">
+        <div>
+          <div class="modal-title" id="detailTitle">Chi tiết chương trình</div>
+          <div id="detailBadges"></div>
+        </div>
+        <button class="close-btn" onclick="closeDetailModal()">✕</button>
+      </div>
+
+      <div class="detail-cover" id="detailCover"></div>
+
+      <div class="detail-info">
+        <div class="item">
+          <strong>Khối lớp</strong>
+          <span id="detailGrade">-</span>
+        </div>
+        <div class="item">
+          <strong>Nguồn tạo</strong>
+          <span id="detailSource">-</span>
+        </div>
+        <div class="item">
+          <strong>Số nội dung</strong>
+          <span id="detailCount">0</span>
+        </div>
+        <div class="item">
+          <strong>Ngày tạo</strong>
+          <span id="detailDate">-</span>
+        </div>
+      </div>
+
+      <div class="detail-section">
+        <h3>Mô tả</h3>
+        <p id="detailDesc">Chưa có mô tả.</p>
+      </div>
+
+      <div class="detail-section">
+        <h3>Nội dung chương trình</h3>
+        <div class="content-list" id="detailContentList"></div>
+      </div>
+
+      <div class="modal-actions">
+        <button class="btn btn-view" onclick="closeDetailModal()">Đóng</button>
+        <button class="btn btn-study" onclick="goToStudyPage()">Bắt đầu học</button>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    let selectedGrade = localStorage.getItem("selectedStudentGrade") || "Lớp 1";
+    let currentPrograms = [];
+    let selectedProgram = null;
+    let studentInfo = null;
+
+    function normalizeGrade(value){
+      const str = String(value || "").trim().toLowerCase();
+      if(!str) return "Lớp 1";
+      if(str === "1" || str === "lop 1" || str === "lớp 1" || str === "khối 1") return "Lớp 1";
+      if(str === "2" || str === "lop 2" || str === "lớp 2" || str === "khối 2") return "Lớp 2";
+      if(str === "3" || str === "lop 3" || str === "lớp 3" || str === "khối 3") return "Lớp 3";
+      if(str === "4" || str === "lop 4" || str === "lớp 4" || str === "khối 4") return "Lớp 4";
+      if(str === "5" || str === "lop 5" || str === "lớp 5" || str === "khối 5") return "Lớp 5";
+      if(str.includes("tất cả") || str.includes("tat ca") || str === "all") return "Tất cả";
+      return value || "Lớp 1";
+    }
+
+    function esc(value){
+      return String(value ?? '')
+        .replace(/&/g,'&amp;')
+        .replace(/</g,'&lt;')
+        .replace(/>/g,'&gt;')
+        .replace(/"/g,'&quot;')
+        .replace(/'/g,'&#39;');
+    }
+
+    function getSourceLabel(source){
+      return source === "teacher" ? "Giáo viên" : "Quản trị viên";
+    }
+
+    function getSourceBadgeClass(source){
+      return source === "teacher" ? "green" : "purple";
+    }
+
+    function createFallbackSvg(title, grade, source){
+      const gradeNumber = String(grade).replace("Lớp ", "").replace("Tất cả", "*");
+      const sourceText = source === "teacher" ? "GV" : "ADMIN";
+      return `
+        <svg viewBox="0 0 320 170" xmlns="http://www.w3.org/2000/svg">
+          <rect width="320" height="170" rx="18" fill="#EEF4FF"/>
+          <circle cx="62" cy="48" r="18" fill="#FCD34D"/>
+          <circle cx="270" cy="42" r="14" fill="#93C5FD"/>
+          <rect x="56" y="58" width="208" height="72" rx="16" fill="#FFFFFF" stroke="#3B82F6" stroke-width="4"/>
+          <rect x="78" y="80" width="92" height="18" rx="9" fill="#DBEAFE"/>
+          <rect x="78" y="108" width="150" height="12" rx="6" fill="#E2E8F0"/>
+          <rect x="236" y="74" width="42" height="36" rx="12" fill="#6366F1"/>
+          <text x="246" y="98" font-size="16" font-weight="800" fill="white">${gradeNumber}</text>
+          <text x="18" y="28" font-size="14" font-weight="800" fill="#2563EB">${sourceText}</text>
+          <text x="74" y="150" font-size="12" font-weight="700" fill="#64748B">${esc(title).slice(0, 22)}</text>
+        </svg>
+      `;
+    }
+
+    function renderProgramMedia(item){
+      if(item.img){
+        return `<img src="${esc(item.img)}" class="program-img" alt="Ảnh chương trình">`;
+      }
+      return createFallbackSvg(item.title, item.grade, item.source);
+    }
+
+    function renderDetailMedia(item){
+      if(item.img){
+        return `<img src="${esc(item.img)}" alt="Ảnh chương trình">`;
+      }
+      return createFallbackSvg(item.title, item.grade, item.source);
+    }
+
+    async function loadPrograms(){
+      try{
+        const res = await fetch(`api/get_student_programs.php?grade=${encodeURIComponent(selectedGrade)}`);
+        const text = await res.text();
+
+        let data;
+        try{
+          data = JSON.parse(text);
+        }catch(e){
+          alert("API học sinh đang lỗi: " + text);
+          return;
+        }
+
+        if(!data.success){
+          alert(data.message || "Không tải được dữ liệu chương trình.");
+          if ((data.message || "").toLowerCase().includes("đăng nhập")) {
+            window.location.href = "dangnhap.html";
+          }
+          return;
+        }
+
+        studentInfo = data.student;
+        selectedGrade = normalizeGrade(data.selectedGrade || selectedGrade);
+        localStorage.setItem("selectedStudentGrade", selectedGrade);
+
+        currentPrograms = (data.programs || []).map(item => ({
+          id: item.id,
+          title: item.title || "Chương trình chưa đặt tên",
+          desc: item.desc || "Chưa có mô tả chương trình.",
+          grade: normalizeGrade(item.grade || selectedGrade),
+          subject: item.subject || "Tiếng Anh",
+          source: item.source || "admin",
+          teacher: item.teacher || (item.source === "teacher" ? "Giáo viên" : "Quản trị viên"),
+          status: item.status || "Đang mở",
+          createdAt: item.createdAt || "",
+          contents: Array.isArray(item.contents) ? item.contents : ["Chưa có danh sách nội dung chi tiết."],
+          img: item.img || ""
+        }));
+
+        renderStudentInfo();
+        renderPrograms();
+      }catch(error){
+        console.error(error);
+        alert("Không tải được dữ liệu chương trình.");
+      }
+    }
+
+    function renderStudentInfo(){
+      document.getElementById("gradeSelect").value = selectedGrade === "Tất cả" ? "Lớp 1" : selectedGrade;
+      document.getElementById("welcomeName").innerText = `Xin chào ${studentInfo?.name || "học sinh"}!`;
+      document.getElementById("welcomeText").innerText = `Đây là các chương trình phù hợp với ${selectedGrade}, gồm cả nội dung từ quản trị viên và giáo viên.`;
+      document.getElementById("studentAvatar").innerText = (studentInfo?.name || "HS").trim().substring(0,2).toUpperCase();
+    }
+
+    function getCurrentFilteredPrograms(){
+      const keyword = document.getElementById("searchInput").value.toLowerCase().trim();
+      const sourceFilter = document.getElementById("sourceFilter").value;
+      const subjectFilter = document.getElementById("subjectFilter").value;
+      const sortFilter = document.getElementById("sortFilter").value;
+
+      let filtered = [...currentPrograms];
+
+      if(sourceFilter !== "all"){
+        filtered = filtered.filter(item => item.source === sourceFilter);
+      }
+
+      if(subjectFilter !== "all"){
+        filtered = filtered.filter(item => item.subject === subjectFilter);
+      }
+
+      if(keyword){
+        filtered = filtered.filter(item =>
+          item.title.toLowerCase().includes(keyword) ||
+          item.desc.toLowerCase().includes(keyword) ||
+          item.subject.toLowerCase().includes(keyword) ||
+          item.grade.toLowerCase().includes(keyword)
+        );
+      }
+
+      if(sortFilter === "az"){
+        filtered.sort((a,b) => a.title.localeCompare(b.title, 'vi'));
+      }else if(sortFilter === "contents"){
+        filtered.sort((a,b) => b.contents.length - a.contents.length);
+      }else{
+        filtered.sort((a,b) => String(b.createdAt).localeCompare(String(a.createdAt), 'vi'));
+      }
+
+      return filtered;
+    }
+
+    function renderPrograms(){
+      const filtered = getCurrentFilteredPrograms();
+      updateStats(filtered);
+      renderTable(filtered);
+    }
+
+    function updateStats(list){
+      const totalContents = list.reduce((sum, item) => sum + item.contents.length, 0);
+      const adminCount = list.filter(item => item.source === "admin").length;
+      const teacherCount = list.filter(item => item.source === "teacher").length;
+
+      document.getElementById("heroGrade").textContent = selectedGrade.replace("Lớp ", "").replace("Tất cả", "*");
+      document.getElementById("heroGradeText").textContent = `Đang hiển thị nội dung cho ${selectedGrade}`;
+      document.getElementById("heroProgramCount").textContent = list.length;
+      document.getElementById("heroAdminCount").textContent = adminCount;
+      document.getElementById("heroTeacherCount").textContent = teacherCount;
+
+      document.getElementById("totalPrograms").textContent = list.length;
+      document.getElementById("adminPrograms").textContent = adminCount;
+      document.getElementById("teacherPrograms").textContent = teacherCount;
+      document.getElementById("totalContents").textContent = totalContents;
+    }
+
+    function renderTable(list){
+      const container = document.getElementById("tableContainer");
+
+      if(!list.length){
+        container.innerHTML = '<div class="empty-box">Chưa có chương trình phù hợp với lớp đang chọn.</div>';
+        return;
+      }
+
+      container.innerHTML = `
+        <div class="table-wrap">
+          <table>
+            <thead>
+              <tr>
+                <th>Ảnh</th>
+                <th>Tên chương trình</th>
+                <th>Ngày tạo</th>
+                <th>Khối</th>
+                <th>Môn học</th>
+                <th>Nguồn</th>
+                <th>Chức năng</th>
+              </tr>
+            </thead>
+            <tbody>
+              ${list.map((item, index) => `
+                <tr>
+                  <td>${item.img ? `<img src="${esc(item.img)}" class="program-img" alt="Ảnh chương trình">` : `<div class="program-img" style="padding:0;overflow:hidden;width:68px;height:46px;">${createFallbackSvg(item.title, item.grade, item.source)}</div>`}</td>
+                  <td>
+                    <div class="program-name">${esc(item.title)}</div>
+                    <div class="program-desc">${esc(item.desc)}</div>
+                  </td>
+                  <td>${esc(item.createdAt || 'Chưa rõ')}</td>
+                  <td><span class="pill blue">${esc(item.grade || 'Chưa rõ')}</span></td>
+                  <td>${esc(item.subject || 'Chưa rõ')}</td>
+                  <td><span class="pill ${item.source === 'teacher' ? 'green' : 'purple'}">${esc(getSourceLabel(item.source))}</span></td>
+                  <td>
+                    <div class="actions">
+                      <button class="icon-btn" onclick="openDetailModal(${index})">👁</button>
+                      <button class="icon-btn primary" onclick="goToLearningProgram(${item.id}, '${item.source}')">Học</button>
+                    </div>
+                  </td>
+                </tr>
+              `).join('')}
+            </tbody>
+          </table>
+        </div>
+      `;
+    }
+
+    function openDetailModal(index){
+      const filtered = getCurrentFilteredPrograms();
+      selectedProgram = filtered[index];
+      if(!selectedProgram) return;
+
+      document.getElementById("detailTitle").textContent = selectedProgram.title;
+      document.getElementById("detailGrade").textContent = selectedProgram.grade;
+      document.getElementById("detailSource").textContent = getSourceLabel(selectedProgram.source);
+      document.getElementById("detailCount").textContent = selectedProgram.contents.length;
+      document.getElementById("detailDate").textContent = selectedProgram.createdAt || "Chưa rõ";
+      document.getElementById("detailDesc").textContent = selectedProgram.desc;
+      document.getElementById("detailCover").innerHTML = renderDetailMedia(selectedProgram);
+      document.getElementById("detailBadges").innerHTML = `
+        <span class="pill blue">${selectedProgram.grade}</span>
+        <span class="pill ${selectedProgram.source === 'teacher' ? 'green' : 'purple'}">${getSourceLabel(selectedProgram.source)}</span>
+        <span class="pill gray">${selectedProgram.status}</span>
+      `;
+
+      document.getElementById("detailContentList").innerHTML = selectedProgram.contents.map((content, i) => `
+        <div class="content-item"><strong>Bài ${i + 1}:</strong> ${esc(content)}</div>
+      `).join("");
+
+      document.getElementById("detailModal").classList.add("show");
+    }
+
+    function closeDetailModal(){
+      document.getElementById("detailModal").classList.remove("show");
+    }
+
+    function goToLearningProgram(programId, source){
+      window.location.href = `nhaplieuhocsinh.html?program_id=${programId}&grade=${encodeURIComponent(selectedGrade)}&source=${encodeURIComponent(source || 'admin')}`;
+    }
+
+    function goToStudyPage(){
+      if(!selectedProgram) return;
+      goToLearningProgram(selectedProgram.id, selectedProgram.source);
+    }
+
+    function toggleMenu(event){
+      event.stopPropagation();
+      document.getElementById("dropdownMenu").classList.toggle("show");
+    }
+
+    async function confirmLogout(){
+      try{
+        await fetch("api/logout.php");
+      }catch(e){}
+      localStorage.removeItem("role");
+      localStorage.removeItem("user_name");
+      localStorage.removeItem("logged_in");
+      localStorage.removeItem("selectedStudentGrade");
+      window.location.href = "dangnhap.html";
+    }
+
+    async function changeGrade(grade){
+      selectedGrade = normalizeGrade(grade);
+      localStorage.setItem("selectedStudentGrade", selectedGrade);
+      await loadPrograms();
+    }
+
+    const menuItems = document.querySelectorAll(".menu li");
+    const activeBar = document.getElementById("activeBar");
+
+    function moveBar(element){
+      if(!element) return;
+      activeBar.style.top = element.offsetTop + "px";
+      activeBar.style.height = element.offsetHeight + "px";
+    }
+
+    menuItems.forEach(item=>{
+      item.addEventListener("click", function(){
+        menuItems.forEach(i=>i.classList.remove("active"));
+        this.classList.add("active");
+        moveBar(this);
+      });
+    });
+
+    window.onload = async function(){
+      moveBar(document.querySelector(".menu li.active"));
+      await loadPrograms();
+    };
+
+    window.addEventListener("click", function(e){
+      const avatarBox = document.querySelector(".avatar-box");
+      const dropdown = document.getElementById("dropdownMenu");
+      if(avatarBox && !avatarBox.contains(e.target)){
+        dropdown.classList.remove("show");
+      }
+
+      if(e.target === document.getElementById("detailModal")){
+        closeDetailModal();
+      }
+    });
+  </script>
+</body>
+</html>

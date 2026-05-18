@@ -1,0 +1,1408 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Quản lý giáo viên</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+
+<style>
+*{margin:0;padding:0;box-sizing:border-box;font-family:'Inter',sans-serif}
+
+:root{
+  --primary:#2563eb;
+  --primary-soft:#eff6ff;
+  --bg:#f8fbff;
+  --text:#0f172a;
+  --muted:#64748b;
+  --border:#e2e8f0;
+  --success:#16a34a;
+  --danger:#dc2626;
+  --warning:#ea580c;
+  --shadow:0 14px 35px rgba(15,23,42,0.06);
+}
+
+body{
+  display:flex;
+  background:linear-gradient(180deg,#f8fbff 0%,#f8fafc 100%);
+  min-height:100vh;
+  color:var(--text)
+}
+
+.sidebar{
+  width:270px;
+  background:#fff;
+  padding:28px 18px;
+  box-shadow:0 20px 40px rgba(15,23,42,.06);
+  position:relative;
+  flex-shrink:0;
+  border-right:1px solid #eef2f7;
+}
+.logo{
+  font-size:24px;
+  font-weight:800;
+  color:var(--primary);
+  margin-bottom:34px;
+  padding:0 10px;
+}
+.menu{
+  list-style:none;
+  position:relative;
+}
+.menu a{
+  text-decoration:none;
+  color:inherit;
+  display:block;
+}
+.menu li{
+  padding:13px 16px;
+  margin-bottom:8px;
+  border-radius:14px;
+  color:var(--muted);
+  font-weight:600;
+  cursor:pointer;
+  transition:.22s;
+  user-select:none;
+}
+.menu li:hover{
+  color:var(--primary);
+  background:var(--primary-soft);
+}
+.menu li.active,
+.menu li.current{
+  color:var(--primary);
+  background:var(--primary-soft);
+}
+.menu-parent{
+  position:relative;
+  padding-right:42px !important;
+}
+.menu-parent .arrow{
+  position:absolute;
+  right:16px;
+  top:50%;
+  transform:translateY(-50%);
+  font-size:12px;
+  transition:.25s;
+  color:#94a3b8;
+}
+.menu-parent.open .arrow{
+  transform:translateY(-50%) rotate(180deg);
+  color:var(--primary);
+}
+.submenu{
+  display:none;
+  margin:4px 0 10px 18px;
+  padding-left:10px;
+  border-left:none;
+}
+.submenu.show{
+  display:block;
+}
+.submenu li{
+  font-size:14px;
+  padding:10px 14px;
+  margin-bottom:6px;
+  border-radius:12px;
+}
+.active-bar{
+  display:none;
+}
+
+.main{
+  flex:1;
+  padding:28px;
+}
+.topbar{
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  gap:16px;
+  flex-wrap:wrap;
+  margin-bottom:22px;
+}
+.page-title h1{
+  font-size:30px;
+  font-weight:800;
+  margin-bottom:8px;
+  color:#111827;
+}
+.page-title p{
+  color:var(--muted);
+  font-size:14px;
+  line-height:1.8;
+  max-width:760px;
+}
+.avatar-box{
+  position:relative;
+  cursor:pointer;
+}
+.avatar{
+  width:46px;
+  height:46px;
+  border-radius:50%;
+  background:linear-gradient(135deg,#60a5fa,#4f46e5);
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  color:white;
+  font-weight:800;
+  box-shadow:0 12px 26px rgba(59,130,246,.24);
+}
+.dropdown{
+  position:absolute;
+  top:58px;
+  right:0;
+  background:white;
+  border-radius:16px;
+  box-shadow:0 20px 40px rgba(15,23,42,.12);
+  display:none;
+  padding:10px;
+  z-index:50;
+  border:1px solid #e2e8f0;
+  min-width:180px;
+}
+.dropdown.show{
+  display:block;
+}
+.dropdown button{
+  width:100%;
+  border:none;
+  background:none;
+  text-align:left;
+  padding:10px 12px;
+  border-radius:10px;
+  cursor:pointer;
+  font-weight:700;
+  color:var(--danger);
+}
+.dropdown button:hover{
+  background:#fef2f2;
+}
+
+.hero{
+  background:linear-gradient(135deg,#60a5fa 0%,#6366f1 50%,#22d3ee 100%);
+  color:white;
+  border-radius:30px;
+  padding:30px;
+  display:grid;
+  grid-template-columns:1.2fr .8fr;
+  gap:20px;
+  align-items:center;
+  position:relative;
+  overflow:hidden;
+  box-shadow:0 24px 50px rgba(96,165,250,.24);
+  margin-bottom:22px;
+}
+.hero::before{
+  content:"";
+  position:absolute;
+  width:280px;
+  height:280px;
+  border-radius:50%;
+  background:rgba(255,255,255,.12);
+  right:-90px;
+  top:-90px;
+}
+.hero h2{
+  font-size:34px;
+  margin-bottom:10px;
+  line-height:1.25;
+  position:relative;
+  z-index:1;
+}
+.hero p{
+  font-size:14px;
+  line-height:1.9;
+  max-width:700px;
+  position:relative;
+  z-index:1;
+  opacity:.97;
+}
+.hero-stats{
+  display:grid;
+  gap:12px;
+  position:relative;
+  z-index:1;
+}
+.hero-stat{
+  background:rgba(255,255,255,.16);
+  border:1px solid rgba(255,255,255,.22);
+  border-radius:18px;
+  padding:16px 18px;
+  backdrop-filter:blur(8px);
+}
+.hero-stat strong{
+  display:block;
+  font-size:30px;
+  font-weight:800;
+  margin-bottom:6px;
+}
+.hero-stat span{
+  font-size:13px;
+  opacity:.98;
+}
+
+.controls{
+  display:grid;
+  grid-template-columns:1fr 220px auto;
+  gap:10px;
+  margin-bottom:20px;
+  align-items:center
+}
+.controls input,.controls select{
+  width:100%;
+  height:48px;
+  padding:0 14px;
+  border-radius:14px;
+  border:1px solid var(--border);
+  outline:none;
+  background:white;
+  font-size:14px;
+}
+.controls input:focus,.controls select:focus,.form-group input:focus,.form-group select:focus{
+  border-color:#93c5fd;
+  box-shadow:0 0 0 3px rgba(59,130,246,0.08)
+}
+.add-btn{
+  border:none;
+  background:var(--primary);
+  color:white;
+  height:48px;
+  padding:0 18px;
+  border-radius:14px;
+  font-weight:700;
+  cursor:pointer;
+  transition:.2s;
+}
+.add-btn:hover{
+  background:#1d4ed8;
+}
+
+.stats{
+  display:grid;
+  grid-template-columns:repeat(4,1fr);
+  gap:14px;
+  margin-bottom:22px
+}
+.stat-card{
+  background:white;
+  border-radius:20px;
+  padding:18px;
+  box-shadow:var(--shadow);
+  border:1px solid #eef2f7
+}
+.stat-card .number{
+  font-size:30px;
+  font-weight:800;
+  color:#111827;
+  margin-bottom:8px
+}
+.stat-card p{
+  font-size:13px;
+  color:#64748b;
+  line-height:1.6
+}
+
+.table-wrap{
+  background:white;
+  border-radius:22px;
+  overflow:hidden;
+  box-shadow:var(--shadow);
+  border:1px solid #eef2f7
+}
+table{
+  width:100%;
+  border-collapse:collapse
+}
+th,td{
+  padding:12px;
+  border-bottom:1px solid #eee;
+  vertical-align:top
+}
+th{
+  background:#f1f5f9;
+  text-align:left
+}
+.actions{
+  opacity:0;
+  transition:0.3s
+}
+tr:hover .actions{
+  opacity:1
+}
+.icon{
+  cursor:pointer;
+  margin-right:10px;
+  font-size:18px;
+  color:black
+}
+.icon:hover{
+  opacity:0.7
+}
+.status{
+  padding:5px 10px;
+  border-radius:6px;
+  font-size:13px;
+  font-weight:600;
+  display:inline-block
+}
+.status.active{
+  background:#dcfce7;
+  color:#15803d
+}
+.status.suspended{
+  background:#fee2e2;
+  color:#b91c1c
+}
+.status.inactive{
+  background:#e5e7eb;
+  color:#4b5563
+}
+.action-btn{
+  border:none;
+  border-radius:8px;
+  padding:7px 10px;
+  cursor:pointer;
+  font-size:12px;
+  font-weight:600;
+  margin-right:6px;
+}
+.action-btn.suspend{
+  background:#fee2e2;
+  color:#b91c1c;
+}
+.action-btn.activate{
+  background:#dcfce7;
+  color:#15803d;
+}
+.empty-row{
+  text-align:center;
+  color:#64748b;
+  padding:28px 16px
+}
+
+.modal{
+  position:fixed;
+  top:0;
+  left:0;
+  width:100%;
+  height:100%;
+  background:rgba(15,23,42,0.30);
+  display:none;
+  align-items:center;
+  justify-content:center;
+  z-index:999;
+  padding:24px
+}
+.modal.show{
+  display:flex
+}
+.modal-box{
+  background:white;
+  width:840px;
+  max-width:95vw;
+  border-radius:22px;
+  padding:32px 34px;
+  box-shadow:0 25px 60px rgba(15,23,42,0.18);
+  max-height:90vh;
+  overflow:auto
+}
+.modal-header{
+  margin-bottom:24px;
+  display:flex;
+  justify-content:space-between;
+  gap:12px;
+  align-items:flex-start
+}
+.modal-title{
+  font-size:20px;
+  font-weight:700;
+  color:#1f2937;
+  margin-bottom:6px
+}
+.modal-subtitle{
+  font-size:16px;
+  color:#6b7280
+}
+.close-modal-btn{
+  border:none;
+  background:#f1f5f9;
+  width:40px;
+  height:40px;
+  border-radius:12px;
+  font-size:18px;
+  cursor:pointer;
+  flex-shrink:0
+}
+
+.form-group{
+  margin-bottom:16px
+}
+.form-group label{
+  display:block;
+  font-size:15px;
+  font-weight:500;
+  color:#4b5563;
+  margin-bottom:8px
+}
+.required{
+  color:#ef4444
+}
+.form-group input,.form-group select{
+  width:100%;
+  height:44px;
+  border:1px solid #d1d5db;
+  border-radius:10px;
+  padding:0 14px;
+  font-size:15px;
+  outline:none;
+  background:white;
+  color:#374151
+}
+.form-group input::placeholder{
+  color:#9ca3af
+}
+.form-group input.error,.form-group select.error{
+  border-color:#ef4444;
+  box-shadow:0 0 0 3px rgba(239,68,68,.08)
+}
+.field-error{
+  display:none;
+  margin-top:6px;
+  font-size:12px;
+  color:#dc2626;
+  font-weight:600
+}
+.field-error.show{
+  display:block
+}
+.form-grid-2{
+  display:grid;
+  grid-template-columns:1fr 1fr;
+  gap:14px
+}
+.form-grid-3{
+  display:grid;
+  grid-template-columns:1fr 1fr 1fr;
+  gap:14px
+}
+
+.note-box{
+  margin-top:6px;
+  background:#f3f4f6;
+  border-radius:12px;
+  padding:14px 16px;
+  font-size:14px;
+  color:#6b7280;
+  line-height:1.6;
+  margin-bottom:26px
+}
+.note-red{
+  color:#ef4444;
+  font-weight:500
+}
+.form-footer{
+  display:flex;
+  justify-content:flex-end;
+  gap:12px;
+  flex-wrap:wrap
+}
+.cancel-btn{
+  background:white;
+  color:#1d4ed8;
+  border:1px solid #93c5fd;
+  padding:12px 28px;
+  border-radius:12px;
+  cursor:pointer;
+  font-size:15px;
+  font-weight:600
+}
+.save-btn{
+  background:#1d4ed8;
+  color:white;
+  border:none;
+  padding:12px 28px;
+  border-radius:12px;
+  cursor:pointer;
+  font-size:15px;
+  font-weight:600
+}
+
+.detail-grid{
+  display:grid;
+  grid-template-columns:repeat(2,1fr);
+  gap:14px
+}
+.detail-item{
+  background:#f8fbff;
+  border:1px solid #dbeafe;
+  border-radius:14px;
+  padding:14px
+}
+.detail-item span{
+  display:block;
+  font-size:12px;
+  font-weight:800;
+  color:#64748b;
+  margin-bottom:8px;
+  text-transform:uppercase;
+  letter-spacing:.4px
+}
+.detail-item strong{
+  font-size:15px;
+  color:#0f172a;
+  line-height:1.7
+}
+.detail-item.full{
+  grid-column:1 / -1
+}
+
+@media (max-width: 1100px){
+  .hero,.stats{grid-template-columns:repeat(2,1fr)}
+  .hero{grid-template-columns:1fr}
+  .controls{grid-template-columns:1fr 1fr}
+  .controls .add-btn{grid-column:1 / -1}
+}
+@media (max-width: 900px){
+  .modal-box{width:100%;padding:24px 18px}
+  .form-grid-2,.form-grid-3,.detail-grid{grid-template-columns:1fr}
+  .controls{grid-template-columns:1fr}
+}
+@media (max-width: 768px){
+  body{flex-direction:column}
+  .sidebar{width:100%}
+  .main{padding:18px}
+  .stats,.controls{grid-template-columns:1fr}
+}
+</style>
+</head>
+
+<body>
+
+<div class="sidebar">
+  <div class="logo">English for Kids</div>
+
+  <ul class="menu" id="menu">
+    <a href="trangchu.html"><li>Trang chủ</li></a>
+    <a href="QLchuongtrinh.html"><li>QL Chương trình</li></a>
+    <a href="QLbai.html"><li>QL Bài học</li></a>
+
+    <li class="menu-parent current" id="userMenu" onclick="toggleUserMenu(event)">
+      QL Người dùng
+      <span class="arrow">▼</span>
+    </li>
+
+    <ul class="submenu" id="userSubmenu">
+      <a href="hocsinh.html" onclick="hideUserMenuBeforeGo()"><li>Học sinh</li></a>
+      <a href="giaovien.html" onclick="hideUserMenuBeforeGo()"><li class="active">Giáo viên</li></a>
+    </ul>
+
+    <a href="baocao.html"><li>Báo cáo</li></a>
+    <a href="caidat.html"><li>Cài đặt</li></a>
+  </ul>
+</div>
+
+<div class="main">
+  <div class="topbar">
+    <div class="page-title">
+      <h1>Quản lý giáo viên</h1>
+      <p>Thêm, chỉnh sửa, xem và quản lý dữ liệu giáo viên được lưu bằng XAMPP + MySQL.</p>
+    </div>
+
+    <div class="avatar-box" onclick="toggleMenu()">
+      <div class="avatar">AD</div>
+      <div class="dropdown" id="dropdownMenu">
+        <button onclick="logout()">Đăng xuất</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="hero">
+    <div>
+      <h2>Quản lý hồ sơ giáo viên trực quan hơn</h2>
+      <p>Trang này kết nối trực tiếp với MySQL qua API giáo viên. Bạn có thể thêm giáo viên, cập nhật hồ sơ và thay đổi trạng thái hoạt động ngay trên giao diện.</p>
+    </div>
+
+    <div class="hero-stats">
+      <div class="hero-stat">
+        <strong id="heroTotalTeachers">0</strong>
+        <span>Tổng giáo viên hiện có</span>
+      </div>
+      <div class="hero-stat">
+        <strong id="heroActiveTeachers">0</strong>
+        <span>Giáo viên đang hoạt động</span>
+      </div>
+    </div>
+  </div>
+
+  <div class="stats">
+    <div class="stat-card">
+      <div class="number" id="totalTeachers">0</div>
+      <p>Tổng số giáo viên trong hệ thống.</p>
+    </div>
+    <div class="stat-card">
+      <div class="number" id="maleTeachers">0</div>
+      <p>Số giáo viên nam hiện có.</p>
+    </div>
+    <div class="stat-card">
+      <div class="number" id="femaleTeachers">0</div>
+      <p>Số giáo viên nữ hiện có.</p>
+    </div>
+    <div class="stat-card">
+      <div class="number" id="showingTeachers">0</div>
+      <p>Số giáo viên đang hiển thị sau khi lọc.</p>
+    </div>
+  </div>
+
+  <div class="controls">
+    <input type="text" id="searchInput" placeholder="Tìm kiếm giáo viên" oninput="renderTeacherTable()">
+    <select id="subjectFilter" onchange="renderTeacherTable()">
+      <option value="all">Tất cả bộ môn</option>
+      <option>Toán</option>
+      <option>Ngữ văn</option>
+      <option>Tiếng Anh</option>
+      <option>Vật lý</option>
+      <option>Hóa học</option>
+      <option>Sinh học</option>
+      <option>Lịch sử</option>
+      <option>Địa lý</option>
+      <option>Tin học</option>
+      <option>Giáo dục công dân</option>
+      <option>Mỹ thuật</option>
+      <option>Âm nhạc</option>
+      <option>Thể dục</option>
+    </select>
+    <button class="add-btn" onclick="openModal()">+ Thêm giáo viên</button>
+  </div>
+
+  <div class="table-wrap">
+    <table>
+      <thead>
+        <tr>
+          <th>Mã GV</th>
+          <th>Họ tên</th>
+          <th>Địa chỉ</th>
+          <th>Bộ môn</th>
+          <th>SĐT</th>
+          <th>Email</th>
+          <th>Trạng thái</th>
+          <th>Quản lý trạng thái</th>
+          <th></th>
+        </tr>
+      </thead>
+      <tbody id="teacherTable">
+        <tr>
+          <td colspan="9" class="empty-row">Đang tải dữ liệu giáo viên...</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+</div>
+
+<div class="modal" id="modal">
+  <div class="modal-box">
+    <div class="modal-header">
+      <div>
+        <div class="modal-title" id="modalTitle">Thêm giáo viên</div>
+        <div class="modal-subtitle">Thêm tài khoản giáo viên</div>
+      </div>
+      <button class="close-modal-btn" onclick="closeModal()">✕</button>
+    </div>
+
+    <div class="form-group">
+      <label>Họ tên <span class="required">(*)</span></label>
+      <input id="name" placeholder="Nhập họ tên giáo viên">
+      <div class="field-error" id="nameError">Vui lòng nhập họ tên giáo viên.</div>
+    </div>
+
+    <div class="form-group">
+      <label>Bộ môn</label>
+      <select id="subject">
+        <option value="">Chọn Bộ môn</option>
+        <option>Toán</option>
+        <option>Ngữ văn</option>
+        <option>Tiếng Anh</option>
+        <option>Vật lý</option>
+        <option>Hóa học</option>
+        <option>Sinh học</option>
+        <option>Lịch sử</option>
+        <option>Địa lý</option>
+        <option>Tin học</option>
+        <option>Giáo dục công dân</option>
+        <option>Mỹ thuật</option>
+        <option>Âm nhạc</option>
+        <option>Thể dục</option>
+      </select>
+    </div>
+
+    <div class="form-grid-3">
+      <div class="form-group">
+        <label>Chọn Tỉnh/Thành Phố</label>
+        <select id="city">
+          <option value="">Đang tải Tỉnh/Thành Phố...</option>
+        </select>
+      </div>
+
+      <div class="form-group">
+        <label>Chọn Quận/Huyện</label>
+        <select id="district" disabled>
+          <option value="">Chọn Quận/Huyện</option>
+        </select>
+      </div>
+
+      <div class="form-group">
+        <label>Chọn Phường/Xã</label>
+        <select id="ward" disabled>
+          <option value="">Chọn Phường/Xã</option>
+        </select>
+      </div>
+    </div>
+
+    <div class="form-group">
+      <label>Địa chỉ</label>
+      <input id="address" placeholder="Số nhà, tên đường">
+    </div>
+
+    <div class="form-grid-2">
+      <div class="form-group">
+        <label>Ngày sinh <span class="required">(*)</span></label>
+        <input id="birthday" type="date">
+        <div class="field-error" id="birthdayError">Vui lòng chọn ngày sinh.</div>
+      </div>
+
+      <div class="form-group">
+        <label>Giới tính</label>
+        <select id="gender">
+          <option value="">Chọn Giới tính</option>
+          <option>Nam</option>
+          <option>Nữ</option>
+        </select>
+      </div>
+    </div>
+
+    <div class="form-grid-2">
+      <div class="form-group">
+        <label>Số điện thoại <span class="required">(*)</span></label>
+        <input id="phone" placeholder="Nhập số điện thoại">
+        <div class="field-error" id="phoneError">Vui lòng nhập số điện thoại.</div>
+      </div>
+
+      <div class="form-group">
+        <label>Email <span class="required">(*)</span></label>
+        <input id="email" placeholder="Nhập email để nhận thông tin">
+        <div class="field-error" id="emailError">Vui lòng nhập email.</div>
+      </div>
+    </div>
+
+    <div class="note-box">
+      <span class="note-red">Lưu ý:</span> Giáo viên dùng số điện thoại hoặc .
+    </div>
+
+    <div class="form-footer">
+      <button class="cancel-btn" onclick="closeModal()">Huỷ bỏ</button>
+      <button class="save-btn" onclick="saveTeacher()">Hoàn tất</button>
+    </div>
+  </div>
+</div>
+
+<div class="modal" id="viewModal">
+  <div class="modal-box">
+    <div class="modal-header">
+      <div>
+        <div class="modal-title">Chi tiết giáo viên</div>
+        <div class="modal-subtitle">Xem toàn bộ thông tin giáo viên đã lưu</div>
+      </div>
+      <button class="close-modal-btn" onclick="closeViewModal()">✕</button>
+    </div>
+
+    <div class="detail-grid" id="detailGrid"></div>
+
+    <div class="form-footer" style="margin-top:24px;">
+      <button class="cancel-btn" onclick="closeViewModal()">Đóng</button>
+    </div>
+  </div>
+</div>
+
+<script>
+let allTeachers = [];
+let editingTeacherId = null;
+
+const citySelect = document.getElementById("city");
+const districtSelect = document.getElementById("district");
+const wardSelect = document.getElementById("ward");
+const API_BASE = "https://provinces.open-api.vn/api/v2";
+
+function toggleMenu(){
+  document.getElementById("dropdownMenu").classList.toggle("show");
+}
+
+function logout(){
+  window.location.href = "dangnhap.html";
+}
+
+function toggleUserMenu(event){
+  if(event) event.stopPropagation();
+  const submenu = document.getElementById("userSubmenu");
+  const toggle = document.getElementById("userMenu");
+  submenu.classList.toggle("show");
+  toggle.classList.toggle("open");
+}
+
+function hideUserMenu(){
+  const submenu = document.getElementById("userSubmenu");
+  const toggle = document.getElementById("userMenu");
+  submenu.classList.remove("show");
+  toggle.classList.remove("open");
+}
+
+function hideUserMenuBeforeGo(){
+  hideUserMenu();
+}
+
+function openModal(){
+  resetForm();
+  document.getElementById("modal").classList.add("show");
+}
+
+function closeModal(){
+  document.getElementById("modal").classList.remove("show");
+}
+
+function closeViewModal(){
+  document.getElementById("viewModal").classList.remove("show");
+}
+
+function resetForm(){
+  editingTeacherId = null;
+  document.getElementById("modalTitle").innerText = "Thêm giáo viên";
+
+  ["name","subject","address","birthday","gender","phone","email"].forEach(id=>{
+    document.getElementById(id).value = "";
+  });
+
+  clearFieldError("name");
+  clearFieldError("birthday");
+  clearFieldError("phone");
+  clearFieldError("email");
+
+  citySelect.value = "";
+  districtSelect.innerHTML = '<option value="">Chọn Quận/Huyện</option>';
+  wardSelect.innerHTML = '<option value="">Chọn Phường/Xã</option>';
+  districtSelect.disabled = true;
+  wardSelect.disabled = true;
+}
+
+function clearFieldError(fieldId){
+  const input = document.getElementById(fieldId);
+  const error = document.getElementById(fieldId + "Error");
+  if(input) input.classList.remove("error");
+  if(error) error.classList.remove("show");
+}
+
+function showFieldError(fieldId, message){
+  const input = document.getElementById(fieldId);
+  const error = document.getElementById(fieldId + "Error");
+  if(input) input.classList.add("error");
+  if(error){
+    error.textContent = message;
+    error.classList.add("show");
+  }
+}
+
+function validateTeacherForm(){
+  let isValid = true;
+
+  clearFieldError("name");
+  clearFieldError("birthday");
+  clearFieldError("phone");
+  clearFieldError("email");
+
+  const name = document.getElementById("name").value.trim();
+  const birthday = document.getElementById("birthday").value;
+  const phone = document.getElementById("phone").value.trim();
+  const email = document.getElementById("email").value.trim();
+
+  if(!name){
+    showFieldError("name", "Vui lòng nhập họ tên giáo viên.");
+    isValid = false;
+  }
+
+  if(!birthday){
+    showFieldError("birthday", "Vui lòng chọn ngày sinh.");
+    isValid = false;
+  }
+
+  if(!phone){
+    showFieldError("phone", "Vui lòng nhập số điện thoại.");
+    isValid = false;
+  }
+
+  if(!email){
+    showFieldError("email", "Vui lòng nhập email.");
+    isValid = false;
+  }
+
+  return isValid;
+}
+
+function getFullAddress(){
+  const street = document.getElementById("address").value.trim();
+  const ward = document.getElementById("ward").value;
+  const district = document.getElementById("district").value;
+  const city = document.getElementById("city").value;
+  return [street, ward, district, city].filter(Boolean).join(", ");
+}
+
+function getStatusLabel(status){
+  if(status === "suspended") return "Đình chỉ";
+  if(status === "inactive") return "Ngưng hoạt động";
+  return "Đang hoạt động";
+}
+
+function getStatusClass(status){
+  if(status === "suspended") return "suspended";
+  if(status === "inactive") return "inactive";
+  return "active";
+}
+
+async function fetchTeachers(){
+  try{
+    const res = await fetch("/BAITAP/api/qlgiaovien/get_list.php");
+    const text = await res.text();
+    let data;
+
+    try{
+      data = JSON.parse(text);
+    }catch(e){
+      console.error(text);
+      allTeachers = [];
+      return;
+    }
+
+    allTeachers = Array.isArray(data) ? data.map(item => ({
+      ...item,
+      status: item.status || (item.isSuspended == 1 ? "suspended" : "active")
+    })) : [];
+  }catch(error){
+    console.error(error);
+    allTeachers = [];
+  }
+}
+
+function updateStats(filtered){
+  const activeTeachers = allTeachers.filter(t => t.status !== "suspended").length;
+  document.getElementById("totalTeachers").innerText = allTeachers.length;
+  document.getElementById("maleTeachers").innerText = allTeachers.filter(t => t.gender === "Nam").length;
+  document.getElementById("femaleTeachers").innerText = allTeachers.filter(t => t.gender === "Nữ").length;
+  document.getElementById("showingTeachers").innerText = filtered.length;
+  document.getElementById("heroTotalTeachers").innerText = allTeachers.length;
+  document.getElementById("heroActiveTeachers").innerText = activeTeachers;
+}
+
+function renderTeacherTable(){
+  const keyword = document.getElementById("searchInput").value.toLowerCase().trim();
+  const subjectFilter = document.getElementById("subjectFilter").value;
+  const table = document.getElementById("teacherTable");
+
+  const filtered = allTeachers.filter(item => {
+    const matchKeyword =
+      (item.name || "").toLowerCase().includes(keyword) ||
+      (item.teacherCode || "").toLowerCase().includes(keyword) ||
+      (item.phone || "").toLowerCase().includes(keyword) ||
+      (item.email || "").toLowerCase().includes(keyword) ||
+      (item.subject || "").toLowerCase().includes(keyword);
+
+    const matchSubject = subjectFilter === "all" || item.subject === subjectFilter;
+    return matchKeyword && matchSubject;
+  });
+
+  updateStats(filtered);
+
+  if(!filtered.length){
+    table.innerHTML = `
+      <tr>
+        <td colspan="9" class="empty-row">
+          Chưa có giáo viên nào phù hợp.
+        </td>
+      </tr>
+    `;
+    return;
+  }
+
+  table.innerHTML = filtered.map(item => {
+    const statusText = getStatusLabel(item.status);
+    const statusClass = getStatusClass(item.status);
+    const suspended = item.status === "suspended";
+
+    return `
+      <tr>
+        <td>${item.teacherCode || "-"}</td>
+        <td>${item.name || "-"}</td>
+        <td>${item.address || "-"}</td>
+        <td>${item.subject || "-"}</td>
+        <td>${item.phone || "-"}</td>
+        <td>${item.email || "-"}</td>
+        <td><span class="status ${statusClass}">${statusText}</span></td>
+        <td>
+          ${
+            suspended
+            ? `<button class="action-btn activate" onclick="updateTeacherStatus(${item.id}, 'active')">Mở lại</button>`
+            : `<button class="action-btn suspend" onclick="updateTeacherStatus(${item.id}, 'suspended')">Đình chỉ</button>`
+          }
+        </td>
+        <td class="actions">
+          <span class="icon" onclick="deleteTeacher(${item.id})">🗑</span>
+          <span class="icon" onclick="editTeacher(${item.id})">✏</span>
+          <span class="icon" onclick="viewTeacher(${item.id})">👁</span>
+        </td>
+      </tr>
+    `;
+  }).join("");
+}
+
+async function saveTeacher(){
+  if(!validateTeacherForm()){
+    alert("Vui lòng nhập đầy đủ họ tên, ngày sinh, số điện thoại và email.");
+    return;
+  }
+
+  const fd = new FormData();
+  fd.append("name", document.getElementById("name").value.trim());
+  fd.append("subject", document.getElementById("subject").value);
+  fd.append("city", citySelect.value);
+  fd.append("district", districtSelect.value);
+  fd.append("ward", wardSelect.value);
+  fd.append("addressDetail", document.getElementById("address").value.trim());
+  fd.append("address", getFullAddress());
+  fd.append("birthday", document.getElementById("birthday").value);
+  fd.append("gender", document.getElementById("gender").value);
+  fd.append("phone", document.getElementById("phone").value.trim());
+  fd.append("email", document.getElementById("email").value.trim());
+  fd.append("status", "active");
+
+  let url = "/BAITAP/api/qlgiaovien/create.php";
+  if(editingTeacherId){
+    url = "/BAITAP/api/qlgiaovien/update.php";
+    fd.append("id", editingTeacherId);
+  }
+
+  try{
+    const res = await fetch(url, {
+      method: "POST",
+      body: fd
+    });
+
+    const text = await res.text();
+    let data;
+    try{
+      data = JSON.parse(text);
+    }catch(e){
+      console.error(text);
+      alert("API giáo viên đang lỗi.");
+      return;
+    }
+
+    if(data.success){
+      closeModal();
+      await fetchTeachers();
+      renderTeacherTable();
+    }else{
+      alert(data.message || "Không lưu được giáo viên");
+    }
+  }catch(error){
+    console.error(error);
+    alert("Không kết nối được API giáo viên.");
+  }
+}
+
+async function updateTeacherStatus(id, status){
+  const confirmText = status === "suspended"
+    ? "Bạn có chắc muốn đình chỉ giáo viên này không?"
+    : "Bạn có chắc muốn mở lại hoạt động cho giáo viên này không?";
+
+  if(!confirm(confirmText)) return;
+
+  const fd = new FormData();
+  fd.append("id", id);
+  fd.append("status", status);
+
+  try{
+    const res = await fetch("/BAITAP/api/qlgiaovien/update_status.php", {
+      method: "POST",
+      body: fd
+    });
+
+    const text = await res.text();
+    let data;
+
+    try{
+      data = JSON.parse(text);
+    }catch(e){
+      console.error(text);
+      alert("API cập nhật trạng thái đang lỗi.");
+      return;
+    }
+
+    if(data.success){
+      await fetchTeachers();
+      renderTeacherTable();
+      alert(status === "suspended" ? "Đã chuyển giáo viên sang đình chỉ." : "Đã mở lại hoạt động giáo viên.");
+    }else{
+      alert(data.message || "Không cập nhật được trạng thái.");
+    }
+  }catch(error){
+    console.error(error);
+    alert("Không kết nối được API cập nhật trạng thái.");
+  }
+}
+
+async function deleteTeacher(id){
+  if(!confirm("Bạn có chắc muốn xóa giáo viên này không?")) return;
+
+  const fd = new FormData();
+  fd.append("id", id);
+
+  try{
+    const res = await fetch("/BAITAP/api/qlgiaovien/delete.php", {
+      method: "POST",
+      body: fd
+    });
+
+    const text = await res.text();
+    let data;
+    try{
+      data = JSON.parse(text);
+    }catch(e){
+      console.error(text);
+      alert("API xóa giáo viên đang lỗi.");
+      return;
+    }
+
+    if(data.success){
+      await fetchTeachers();
+      renderTeacherTable();
+    }else{
+      alert(data.message || "Không xóa được giáo viên");
+    }
+  }catch(error){
+    console.error(error);
+    alert("Không kết nối được API xóa giáo viên.");
+  }
+}
+
+async function editTeacher(id){
+  try{
+    const res = await fetch("/BAITAP/api/qlgiaovien/get_detail.php?id=" + id);
+    const text = await res.text();
+    let data;
+    try{
+      data = JSON.parse(text);
+    }catch(e){
+      console.error(text);
+      alert("API chi tiết giáo viên đang lỗi.");
+      return;
+    }
+
+    if(!data.success){
+      alert("Không tải được dữ liệu giáo viên");
+      return;
+    }
+
+    const teacher = data.data || data.teacher;
+    editingTeacherId = id;
+    resetForm();
+
+    document.getElementById("modalTitle").innerText = "Chỉnh sửa giáo viên";
+    document.getElementById("name").value = teacher.name || "";
+    document.getElementById("subject").value = teacher.subject || "";
+    document.getElementById("address").value = teacher.addressDetail || "";
+    document.getElementById("birthday").value = teacher.birthday || "";
+    document.getElementById("gender").value = teacher.gender || "";
+    document.getElementById("phone").value = teacher.phone || "";
+    document.getElementById("email").value = teacher.email || "";
+
+    document.getElementById("modal").classList.add("show");
+
+    if(teacher.city){
+      citySelect.value = teacher.city;
+      await loadDistrictsByCityName(teacher.city);
+    }
+    if(teacher.district){
+      districtSelect.value = teacher.district;
+      await loadWardsByDistrictName(teacher.district);
+    }
+    if(teacher.ward){
+      wardSelect.value = teacher.ward;
+    }
+  }catch(error){
+    console.error(error);
+    alert("Không kết nối được API chi tiết giáo viên.");
+  }
+}
+
+function viewTeacher(id){
+  const teacher = allTeachers.find(item => item.id === id);
+  if(!teacher) return;
+
+  const statusText = getStatusLabel(teacher.status);
+
+  document.getElementById("detailGrid").innerHTML = `
+    <div class="detail-item"><span>Mã giáo viên</span><strong>${teacher.teacherCode || "-"}</strong></div>
+    <div class="detail-item"><span>Họ tên</span><strong>${teacher.name || "-"}</strong></div>
+    <div class="detail-item"><span>Bộ môn</span><strong>${teacher.subject || "-"}</strong></div>
+    <div class="detail-item"><span>Trạng thái</span><strong>${statusText}</strong></div>
+    <div class="detail-item"><span>Ngày sinh</span><strong>${teacher.birthday || "-"}</strong></div>
+    <div class="detail-item"><span>Giới tính</span><strong>${teacher.gender || "-"}</strong></div>
+    <div class="detail-item"><span>Số điện thoại</span><strong>${teacher.phone || "-"}</strong></div>
+    <div class="detail-item"><span>Email</span><strong>${teacher.email || "-"}</strong></div>
+    <div class="detail-item full"><span>Địa chỉ</span><strong>${teacher.address || "-"}</strong></div>
+    <div class="detail-item"><span>Ngày tạo</span><strong>${teacher.createdAt || "-"}</strong></div>
+  `;
+  document.getElementById("viewModal").classList.add("show");
+}
+
+async function loadCities(){
+  try{
+    citySelect.innerHTML = '<option value="">Đang tải Tỉnh/Thành Phố...</option>';
+    districtSelect.innerHTML = '<option value="">Chọn Quận/Huyện</option>';
+    wardSelect.innerHTML = '<option value="">Chọn Phường/Xã</option>';
+    districtSelect.disabled = true;
+    wardSelect.disabled = true;
+
+    const res = await fetch(`${API_BASE}/p/`);
+    const cities = await res.json();
+
+    citySelect.innerHTML = '<option value="">Chọn Tỉnh/Thành Phố</option>';
+    cities.forEach(city=>{
+      citySelect.innerHTML += `<option value="${city.name}" data-code="${city.code}">${city.name}</option>`;
+    });
+  }catch(error){
+    citySelect.innerHTML = '<option value="">Không tải được dữ liệu</option>';
+    console.error("Lỗi tải tỉnh/thành:", error);
+  }
+}
+
+citySelect.addEventListener("change", async function(){
+  const selectedOption = this.options[this.selectedIndex];
+  const cityCode = selectedOption.getAttribute("data-code");
+
+  districtSelect.innerHTML = '<option value="">Đang tải Quận/Huyện...</option>';
+  wardSelect.innerHTML = '<option value="">Chọn Phường/Xã</option>';
+  districtSelect.disabled = true;
+  wardSelect.disabled = true;
+
+  if(!cityCode){
+    districtSelect.innerHTML = '<option value="">Chọn Quận/Huyện</option>';
+    wardSelect.innerHTML = '<option value="">Chọn Phường/Xã</option>';
+    return;
+  }
+
+  try{
+    const res = await fetch(`${API_BASE}/p/${cityCode}?depth=2`);
+    const cityData = await res.json();
+
+    districtSelect.innerHTML = '<option value="">Chọn Quận/Huyện</option>';
+    (cityData.districts || []).forEach(district=>{
+      districtSelect.innerHTML += `<option value="${district.name}" data-code="${district.code}">${district.name}</option>`;
+    });
+    districtSelect.disabled = false;
+  }catch(error){
+    districtSelect.innerHTML = '<option value="">Không tải được Quận/Huyện</option>';
+    console.error("Lỗi tải quận/huyện:", error);
+  }
+});
+
+districtSelect.addEventListener("change", async function(){
+  const selectedOption = this.options[this.selectedIndex];
+  const districtCode = selectedOption.getAttribute("data-code");
+
+  wardSelect.innerHTML = '<option value="">Đang tải Phường/Xã...</option>';
+  wardSelect.disabled = true;
+
+  if(!districtCode){
+    wardSelect.innerHTML = '<option value="">Chọn Phường/Xã</option>';
+    return;
+  }
+
+  try{
+    const res = await fetch(`${API_BASE}/d/${districtCode}?depth=2`);
+    const districtData = await res.json();
+
+    wardSelect.innerHTML = '<option value="">Chọn Phường/Xã</option>';
+    (districtData.wards || []).forEach(ward=>{
+      wardSelect.innerHTML += `<option value="${ward.name}" data-code="${ward.code}">${ward.name}</option>`;
+    });
+
+    wardSelect.disabled = false;
+  }catch(error){
+    wardSelect.innerHTML = '<option value="">Không tải được Phường/Xã</option>';
+    console.error("Lỗi tải phường/xã:", error);
+  }
+});
+
+async function loadDistrictsByCityName(cityName){
+  const option = Array.from(citySelect.options).find(item => item.value === cityName);
+  const cityCode = option ? option.getAttribute("data-code") : "";
+  if(!cityCode) return;
+
+  const res = await fetch(`${API_BASE}/p/${cityCode}?depth=2`);
+  const cityData = await res.json();
+
+  districtSelect.innerHTML = '<option value="">Chọn Quận/Huyện</option>';
+  (cityData.districts || []).forEach(district=>{
+    districtSelect.innerHTML += `<option value="${district.name}" data-code="${district.code}">${district.name}</option>`;
+  });
+  districtSelect.disabled = false;
+}
+
+async function loadWardsByDistrictName(districtName){
+  const option = Array.from(districtSelect.options).find(item => item.value === districtName);
+  const districtCode = option ? option.getAttribute("data-code") : "";
+  if(!districtCode) return;
+
+  const res = await fetch(`${API_BASE}/d/${districtCode}?depth=2`);
+  const districtData = await res.json();
+
+  wardSelect.innerHTML = '<option value="">Chọn Phường/Xã</option>';
+  (districtData.wards || []).forEach(ward=>{
+    wardSelect.innerHTML += `<option value="${ward.name}" data-code="${ward.code}">${ward.name}</option>`;
+  });
+  wardSelect.disabled = false;
+}
+
+["name","birthday","phone","email"].forEach(id=>{
+  document.getElementById(id).addEventListener("input", ()=>clearFieldError(id));
+  document.getElementById(id).addEventListener("change", ()=>clearFieldError(id));
+});
+
+window.onload = async function(){
+  hideUserMenu();
+  await loadCities();
+  await fetchTeachers();
+  renderTeacherTable();
+};
+
+document.addEventListener("click", function(e){
+  if(!e.target.closest(".avatar-box")){
+    document.getElementById("dropdownMenu").classList.remove("show");
+  }
+
+  if(
+    !e.target.closest("#userMenu") &&
+    !e.target.closest("#userSubmenu")
+  ){
+    hideUserMenu();
+  }
+
+  if(e.target === document.getElementById("modal")){
+    closeModal();
+  }
+  if(e.target === document.getElementById("viewModal")){
+    closeViewModal();
+  }
+});
+</script>
+
+</body>
+</html>

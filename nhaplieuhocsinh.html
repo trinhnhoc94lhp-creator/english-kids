@@ -1,0 +1,1114 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Nhập liệu học sinh</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <style>
+    *{
+      margin:0;
+      padding:0;
+      box-sizing:border-box;
+      font-family:'Inter',sans-serif;
+    }
+
+    :root{
+      --primary:#2563eb;
+      --primary-2:#4f46e5;
+      --soft:#eef5ff;
+      --line:#e5eef8;
+      --text:#0f172a;
+      --muted:#64748b;
+      --bg:#f4f7fb;
+      --green:#16a34a;
+      --orange:#ea580c;
+      --red:#ef4444;
+      --shadow:0 12px 28px rgba(15,23,42,.06);
+    }
+
+    body{
+      display:flex;
+      min-height:100vh;
+      color:var(--text);
+      background:
+        radial-gradient(circle at top left, rgba(37,99,235,.08), transparent 26%),
+        radial-gradient(circle at top right, rgba(124,58,237,.08), transparent 20%),
+        var(--bg);
+    }
+
+    .sidebar{
+      width:280px;
+      background:rgba(255,255,255,.92);
+      backdrop-filter:blur(10px);
+      border-right:1px solid rgba(226,232,240,.9);
+      padding:24px 18px;
+      position:sticky;
+      top:0;
+      height:100vh;
+      flex-shrink:0;
+      z-index:5;
+    }
+
+    .brand{
+      display:flex;
+      align-items:center;
+      gap:14px;
+      padding:14px;
+      border-radius:22px;
+      background:linear-gradient(135deg, rgba(37,99,235,.10), rgba(79,70,229,.08));
+      margin-bottom:28px;
+      border:1px solid rgba(191,219,254,.6);
+    }
+
+    .brand-mark{
+      width:56px;
+      height:56px;
+      border-radius:18px;
+      background:linear-gradient(135deg,var(--primary),var(--primary-2));
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      color:#fff;
+      font-size:22px;
+      font-weight:900;
+      box-shadow:0 12px 28px rgba(37,99,235,.24);
+      flex-shrink:0;
+    }
+
+    .brand-text strong{
+      display:block;
+      font-size:18px;
+      font-weight:800;
+    }
+
+    .brand-text span{
+      display:block;
+      font-size:12px;
+      color:var(--muted);
+      margin-top:4px;
+    }
+
+    .menu{
+      list-style:none;
+      position:relative;
+    }
+
+    .menu a{
+      text-decoration:none;
+      color:inherit;
+      display:block;
+    }
+
+    .menu li{
+      padding:14px 16px;
+      margin-bottom:8px;
+      border-radius:16px;
+      color:var(--muted);
+      font-weight:600;
+      cursor:pointer;
+      transition:.25s ease;
+    }
+
+    .menu li:hover{
+      background:var(--soft);
+      color:var(--primary);
+      transform:translateX(2px);
+    }
+
+    .menu li.active{
+      background:linear-gradient(90deg, rgba(37,99,235,.14), rgba(79,70,229,.10));
+      color:var(--primary);
+      box-shadow:inset 0 0 0 1px rgba(147,197,253,.35);
+    }
+
+    .active-bar{
+      position:absolute;
+      left:-18px;
+      width:5px;
+      height:42px;
+      border-radius:0 8px 8px 0;
+      background:linear-gradient(180deg,var(--primary),var(--primary-2));
+      transition:.3s;
+    }
+
+    .main{
+      flex:1;
+      padding:28px;
+      overflow-y:auto;
+    }
+
+    .topbar{
+      display:flex;
+      justify-content:space-between;
+      align-items:center;
+      gap:16px;
+      flex-wrap:wrap;
+      margin-bottom:24px;
+    }
+
+    .page-title h1{
+      font-size:30px;
+      font-weight:900;
+      letter-spacing:-.03em;
+      margin-bottom:6px;
+    }
+
+    .page-title p{
+      font-size:14px;
+      color:var(--muted);
+      line-height:1.7;
+    }
+
+    .topbar-right{
+      display:flex;
+      align-items:center;
+      gap:14px;
+    }
+
+    .avatar-box{position:relative;cursor:pointer}
+
+    .avatar{
+      width:46px;
+      height:46px;
+      border-radius:16px;
+      background:linear-gradient(135deg,var(--primary),var(--primary-2));
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      color:#fff;
+      font-weight:800;
+      box-shadow:0 12px 28px rgba(59,130,246,.22);
+    }
+
+    .dropdown{
+      position:absolute;
+      top:58px;
+      right:0;
+      background:white;
+      border-radius:16px;
+      box-shadow:0 18px 40px rgba(15,23,42,.14);
+      display:none;
+      padding:10px;
+      min-width:160px;
+      z-index:100;
+      border:1px solid #eef2f7;
+    }
+
+    .dropdown.show{display:block}
+
+    .dropdown button{
+      width:100%;
+      border:none;
+      background:none;
+      cursor:pointer;
+      padding:10px 12px;
+      color:var(--red);
+      font-weight:700;
+      border-radius:10px;
+      text-align:left;
+    }
+
+    .dropdown button:hover{background:#fef2f2}
+
+    .hero{
+      position:relative;
+      overflow:hidden;
+      background:linear-gradient(135deg,#1d4ed8 0%,#4338ca 55%,#7c3aed 100%);
+      border-radius:32px;
+      padding:28px;
+      display:grid;
+      grid-template-columns:1.2fr .8fr;
+      gap:22px;
+      color:white;
+      box-shadow:0 24px 60px rgba(37,99,235,.23);
+      margin-bottom:24px;
+      align-items:center;
+    }
+
+    .hero::before{
+      content:'';
+      position:absolute;
+      width:260px;
+      height:260px;
+      border-radius:50%;
+      background:rgba(255,255,255,.08);
+      right:-70px;
+      top:-90px;
+    }
+
+    .hero-content,.hero-side{position:relative;z-index:1}
+
+    .hero-badge{
+      display:inline-flex;
+      align-items:center;
+      gap:8px;
+      padding:9px 14px;
+      border-radius:999px;
+      background:rgba(255,255,255,.14);
+      border:1px solid rgba(255,255,255,.18);
+      font-size:12px;
+      font-weight:800;
+      margin-bottom:16px;
+    }
+
+    .hero-content h2{
+      font-size:32px;
+      font-weight:900;
+      margin-bottom:12px;
+      line-height:1.2;
+    }
+
+    .hero-content p{
+      font-size:15px;
+      line-height:1.8;
+      opacity:.96;
+      max-width:620px;
+    }
+
+    .hero-mini-grid{
+      display:grid;
+      grid-template-columns:1fr 1fr;
+      gap:12px;
+    }
+
+    .hero-mini{
+      padding:16px;
+      border-radius:20px;
+      background:rgba(255,255,255,.12);
+      border:1px solid rgba(255,255,255,.18);
+      backdrop-filter:blur(8px);
+    }
+
+    .hero-mini strong{
+      display:block;
+      font-size:24px;
+      font-weight:900;
+      margin-bottom:6px;
+    }
+
+    .hero-mini span{
+      font-size:13px;
+      line-height:1.6;
+      opacity:.95;
+    }
+
+    .program-card{
+      display:grid;
+      grid-template-columns:110px 1fr;
+      gap:18px;
+      padding:18px;
+      background:#e8eef7;
+      margin-bottom:18px;
+      border-radius:24px;
+      box-shadow:var(--shadow);
+    }
+
+    .book-cover{
+      width:100px;
+      height:140px;
+      object-fit:cover;
+      border-radius:14px;
+      background:#fff;
+      border:1px solid #e5e7eb;
+      box-shadow:0 8px 16px rgba(0,0,0,.08);
+    }
+
+    .program-info{
+      display:grid;
+      gap:12px;
+      align-content:start;
+      padding-top:4px;
+    }
+
+    .program-row{
+      display:grid;
+      grid-template-columns:120px 1fr;
+      gap:8px;
+      align-items:center;
+      font-size:15px;
+    }
+
+    .program-row .label{
+      color:#374151;
+      font-weight:700;
+    }
+
+    .program-row .value{
+      font-weight:800;
+      color:#111827;
+    }
+
+    .status{
+      display:inline-flex;
+      align-items:center;
+      padding:6px 12px;
+      border-radius:999px;
+      font-size:13px;
+      font-weight:700;
+      background:#dcfce7;
+      color:var(--green);
+      width:max-content;
+    }
+
+    .tabs-wrap{
+      display:flex;
+      gap:22px;
+      margin:4px 0 16px;
+      padding:0 4px;
+    }
+
+    .tab{
+      border:none;
+      background:none;
+      font-size:16px;
+      font-weight:800;
+      color:#4b5563;
+      padding:10px 0 8px;
+      border-bottom:2px solid transparent;
+      cursor:pointer;
+    }
+
+    .tab.active{
+      color:#f59e0b;
+      border-color:#f59e0b;
+    }
+
+    .tab-pane{display:none}
+    .tab-pane.active{display:block}
+
+    .content{
+      display:grid;
+      grid-template-columns:1fr 420px;
+      gap:20px;
+      align-items:start;
+    }
+
+    .section-card{
+      background:white;
+      border-radius:24px;
+      padding:20px;
+      box-shadow:var(--shadow);
+      margin-bottom:18px;
+    }
+
+    .section-title{
+      font-size:18px;
+      font-weight:900;
+      margin-bottom:14px;
+    }
+
+    .lesson-list{
+      display:flex;
+      flex-direction:column;
+      gap:10px;
+    }
+
+    .lesson-item{
+      padding:14px;
+      border:1px solid var(--line);
+      border-radius:16px;
+      display:flex;
+      justify-content:space-between;
+      align-items:center;
+      gap:12px;
+      cursor:pointer;
+      transition:.2s;
+      background:#fff;
+    }
+
+    .lesson-item:hover{
+      background:#f8fbff;
+      border-color:#bfdbfe;
+    }
+
+    .lesson-item.active{
+      background:var(--primary);
+      border-color:var(--primary);
+      color:#fff;
+    }
+
+    .lesson-item.active .lesson-title,
+    .lesson-item.active .lesson-sub{
+      color:#fff;
+    }
+
+    .lesson-left{
+      min-width:0;
+    }
+
+    .lesson-title{
+      font-size:15px;
+      font-weight:800;
+      margin-bottom:4px;
+    }
+
+    .lesson-sub{
+      font-size:13px;
+      color:var(--muted);
+    }
+
+    .preview-card{
+      background:white;
+      border-radius:24px;
+      padding:20px;
+      box-shadow:var(--shadow);
+      position:sticky;
+      top:20px;
+    }
+
+    .preview-title{
+      font-size:18px;
+      font-weight:900;
+      margin-bottom:14px;
+    }
+
+    .preview-box{
+      min-height:280px;
+      border:1px dashed #bfdbfe;
+      border-radius:16px;
+      background:#f8fbff;
+      padding:18px;
+      overflow:auto;
+      line-height:1.7;
+      color:#475569;
+    }
+
+    .preview-center{
+      min-height:220px;
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      text-align:center;
+    }
+
+    .preview-box iframe{
+      width:100%;
+      height:620px;
+      border:none;
+      border-radius:12px;
+      background:#fff;
+    }
+
+    .question-card{
+      background:#fff;
+      border:1px solid #e5e7eb;
+      border-radius:18px;
+      padding:16px;
+      margin-bottom:14px;
+    }
+
+    .question-title{
+      font-weight:800;
+      margin-bottom:12px;
+      line-height:1.7;
+    }
+
+    .option-item{
+      padding:12px 14px;
+      border:1px solid #dbe2ea;
+      border-radius:12px;
+      margin-bottom:10px;
+      cursor:pointer;
+      transition:.2s;
+      background:#fff;
+    }
+
+    .option-item:hover{
+      border-color:#93c5fd;
+      background:#f8fbff;
+    }
+
+    .option-item.selected{
+      border-color:#2563eb;
+      background:#eff6ff;
+    }
+
+    .option-item.correct{
+      border-color:#16a34a;
+      background:#f0fdf4;
+    }
+
+    .option-item.wrong{
+      border-color:#ef4444;
+      background:#fef2f2;
+    }
+
+    .exercise-actions{
+      display:flex;
+      gap:10px;
+      flex-wrap:wrap;
+      margin-top:16px;
+    }
+
+    .btn{
+      border:none;
+      border-radius:12px;
+      cursor:pointer;
+      font-weight:800;
+      transition:.2s;
+      padding:11px 18px;
+    }
+
+    .btn-primary{
+      background:#2563eb;
+      color:#fff;
+    }
+
+    .btn-primary:hover{
+      background:#1d4ed8;
+    }
+
+    .btn-secondary{
+      background:#fff;
+      color:#2563eb;
+      border:1px solid #dbe2ea;
+    }
+
+    .score-box{
+      margin-top:14px;
+      padding:14px;
+      border-radius:14px;
+      background:#eff6ff;
+      color:#1d4ed8;
+      font-weight:800;
+      display:none;
+    }
+
+    .matching-pair{
+      display:grid;
+      grid-template-columns:1fr 1fr;
+      gap:12px;
+      margin-bottom:10px;
+    }
+
+    .matching-box{
+      padding:12px 14px;
+      border-radius:12px;
+      background:#f8fafc;
+      border:1px solid #e5e7eb;
+    }
+
+    @media (max-width:1200px){
+      .content{
+        grid-template-columns:1fr;
+      }
+      .preview-card{
+        position:static;
+      }
+    }
+
+    @media (max-width:768px){
+      body{flex-direction:column}
+      .sidebar{width:100%;height:auto;position:relative}
+      .main{padding:18px}
+      .hero,
+      .program-card{
+        grid-template-columns:1fr;
+      }
+      .hero-mini-grid,
+      .matching-pair{
+        grid-template-columns:1fr;
+      }
+      .program-row{
+        grid-template-columns:1fr;
+      }
+    }
+  </style>
+</head>
+<body>
+  <aside class="sidebar">
+    <div class="brand">
+      <div class="brand-mark">EF</div>
+      <div class="brand-text">
+        <strong>English for Kids</strong>
+        <span>Learning with joy</span>
+      </div>
+    </div>
+
+    <ul class="menu" id="menu">
+      <div class="active-bar" id="activeBar"></div>
+      <a href="trangchuhocsinh.html"><li>Trang chủ</li></a>
+      <a href="QLchuongtrinhhocsinh.html"><li class="active">Chương trình học</li></a>
+      <a href="QLbaitaphocsinh.html"><li>Bài tập</li></a>
+      <a href="thongtin.html"><li>Thông tin cá nhân</li></a>
+    </ul>
+  </aside>
+
+  <main class="main">
+    <div class="topbar">
+      <div class="page-title">
+        <h1 id="pageTitle">Nội dung chương trình học</h1>
+        <p id="pageSubtitle">Học lý thuyết và làm bài tập trực tiếp trên hệ thống.</p>
+      </div>
+
+      <div class="topbar-right">
+        <div class="avatar-box" onclick="toggleMenu(event)">
+          <div class="avatar" id="studentAvatar">HS</div>
+          <div class="dropdown" id="dropdownMenu">
+            <button onclick="confirmLogout(); event.stopPropagation();">Đăng xuất</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <section class="hero">
+      <div class="hero-content">
+        <div class="hero-badge">📘 Nhập liệu học sinh</div>
+        <h2 id="heroTitle">Đang tải chương trình...</h2>
+        <p id="heroDesc">Trang này lấy dữ liệu lý thuyết và bài tập từ trang nhập liệu của quản trị viên hoặc giáo viên.</p>
+      </div>
+
+      <div class="hero-side">
+        <div class="hero-mini-grid">
+          <div class="hero-mini">
+            <strong id="heroGrade">-</strong>
+            <span>Khối lớp</span>
+          </div>
+          <div class="hero-mini">
+            <strong id="heroSource">-</strong>
+            <span>Nguồn dữ liệu</span>
+          </div>
+          <div class="hero-mini">
+            <strong id="heroTheoryCount">0</strong>
+            <span>Số bài lý thuyết</span>
+          </div>
+          <div class="hero-mini">
+            <strong id="heroExerciseCount">0</strong>
+            <span>Số bộ bài tập</span>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <div class="program-card">
+      <img id="programImage" class="book-cover" src="" alt="Ảnh chương trình">
+      <div class="program-info">
+        <div class="program-row">
+          <div class="label">Chương trình:</div>
+          <div class="value" id="programName">-</div>
+        </div>
+        <div class="program-row">
+          <div class="label">Môn học:</div>
+          <div class="value" id="programSubject">-</div>
+        </div>
+        <div class="program-row">
+          <div class="label">Khối:</div>
+          <div class="value" id="programGrade">-</div>
+        </div>
+        <div class="program-row">
+          <div class="label">Trạng thái:</div>
+          <div class="value"><span class="status" id="programStatus">Đang học</span></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="tabs-wrap">
+      <button class="tab active" data-tab="theoryPane">Lý thuyết</button>
+      <button class="tab" data-tab="exercisePane">Bài tập</button>
+    </div>
+
+    <div class="content">
+      <div class="left-panel">
+        <div class="tab-pane active" id="theoryPane">
+          <div class="section-card">
+            <div class="section-title">Danh sách lý thuyết</div>
+            <div class="lesson-list" id="theoryList"></div>
+          </div>
+        </div>
+
+        <div class="tab-pane" id="exercisePane">
+          <div class="section-card">
+            <div class="section-title">Danh sách bài tập</div>
+            <div class="lesson-list" id="exerciseList"></div>
+          </div>
+
+          <div class="section-card" id="exerciseWorkArea" style="display:none;">
+            <div class="section-title" id="exerciseWorkTitle">Làm bài tập</div>
+            <div id="exerciseQuestions"></div>
+            <div class="exercise-actions">
+              <button class="btn btn-primary" onclick="submitExercise()">Nộp bài</button>
+              <button class="btn btn-secondary" onclick="resetExerciseAnswers()">Làm lại</button>
+            </div>
+            <div class="score-box" id="scoreBox"></div>
+          </div>
+        </div>
+      </div>
+
+      <div class="right-panel">
+        <div class="preview-card">
+          <div class="preview-title">Xem trước</div>
+          <div class="preview-box" id="previewBox">
+            <div class="preview-center">Chọn bài lý thuyết hoặc bài tập để xem nội dung.</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </main>
+
+  <script>
+    const urlParams = new URLSearchParams(window.location.search);
+    const programId = urlParams.get("program_id");
+    const source = urlParams.get("source") || "admin";
+    const grade = urlParams.get("grade") || "";
+
+    let currentProgram = null;
+    let theoryList = [];
+    let exerciseSets = [];
+    let currentExerciseQuestions = [];
+    let currentExerciseSet = null;
+    let selectedAnswers = {};
+
+    const menuItems = document.querySelectorAll(".menu li");
+    const activeBar = document.getElementById("activeBar");
+
+    function moveBar(element){
+      if(!element) return;
+      activeBar.style.top = element.offsetTop + "px";
+      activeBar.style.height = element.offsetHeight + "px";
+    }
+
+    menuItems.forEach(item=>{
+      item.addEventListener("click",function(){
+        menuItems.forEach(i=>i.classList.remove("active"));
+        this.classList.add("active");
+        moveBar(this);
+      });
+    });
+
+    function toggleMenu(event){
+      event.stopPropagation();
+      document.getElementById("dropdownMenu").classList.toggle("show");
+    }
+
+    async function confirmLogout(){
+      try{
+        await fetch("api/logout.php");
+      }catch(e){}
+      localStorage.removeItem("role");
+      localStorage.removeItem("user_name");
+      localStorage.removeItem("logged_in");
+      window.location.href = "dangnhap.html";
+    }
+
+    function normalizeGrade(value){
+      const str = String(value || "").trim().toLowerCase();
+      if(!str) return "";
+      if(str === "1" || str === "lop 1" || str === "lớp 1" || str === "khối 1") return "Lớp 1";
+      if(str === "2" || str === "lop 2" || str === "lớp 2" || str === "khối 2") return "Lớp 2";
+      if(str === "3" || str === "lop 3" || str === "lớp 3" || str === "khối 3") return "Lớp 3";
+      if(str === "4" || str === "lop 4" || str === "lớp 4" || str === "khối 4") return "Lớp 4";
+      if(str === "5" || str === "lop 5" || str === "lớp 5" || str === "khối 5") return "Lớp 5";
+      if(str.includes("tất cả") || str.includes("tat ca") || str === "all") return "Tất cả";
+      return value;
+    }
+
+    function bindTabs(){
+      const tabs = document.querySelectorAll(".tab");
+      const panes = document.querySelectorAll(".tab-pane");
+
+      tabs.forEach(tab=>{
+        tab.addEventListener("click", function(){
+          tabs.forEach(t=>t.classList.remove("active"));
+          panes.forEach(p=>p.classList.remove("active"));
+          this.classList.add("active");
+          document.getElementById(this.dataset.tab).classList.add("active");
+        });
+      });
+    }
+
+    async function loadProgramDetail(){
+      if(!programId){
+        alert("Thiếu program_id");
+        return;
+      }
+
+      const res = await fetch(`api/get_student_programs.php?grade=${encodeURIComponent(grade)}`);
+      const text = await res.text();
+
+      let data;
+      try{
+        data = JSON.parse(text);
+      }catch(e){
+        alert("API chương trình học sinh lỗi: " + text);
+        return;
+      }
+
+      if(!data.success){
+        alert(data.message || "Không tải được chương trình");
+        return;
+      }
+
+      const found = (data.programs || []).find(item =>
+        String(item.id) === String(programId) &&
+        String(item.source || "admin") === String(source)
+      );
+
+      if(!found){
+        alert("Không tìm thấy chương trình.");
+        return;
+      }
+
+      currentProgram = found;
+
+      document.getElementById("programName").innerText = found.title || "-";
+      document.getElementById("programSubject").innerText = found.subject || "-";
+      document.getElementById("programGrade").innerText = normalizeGrade(found.grade || "-");
+      document.getElementById("programStatus").innerText = found.status || "Đang học";
+      document.getElementById("programImage").src = found.img || "https://via.placeholder.com/100x140.png?text=Book";
+
+      document.getElementById("heroTitle").innerText = found.title || "Nội dung chương trình";
+      document.getElementById("heroDesc").innerText = found.desc || "Học lý thuyết và làm bài tập trực tiếp trên hệ thống.";
+      document.getElementById("heroGrade").innerText = normalizeGrade(found.grade || "-");
+      document.getElementById("heroSource").innerText = source === "teacher" ? "Giáo viên" : "Quản trị viên";
+
+      document.getElementById("pageTitle").innerText = found.title || "Nội dung chương trình học";
+      document.getElementById("pageSubtitle").innerText = `Học sinh đang xem nội dung của ${normalizeGrade(found.grade || "-")} - ${found.subject || "Tiếng Anh"}.`;
+
+      const studentName = (data.student?.name || "HS").trim();
+      document.getElementById("studentAvatar").innerText = studentName.substring(0,2).toUpperCase();
+
+      await loadTheoryData();
+      await loadExerciseData();
+    }
+
+    async function loadTheoryData(){
+      const res = await fetch(`api/get_theories.php?program_id=${encodeURIComponent(programId)}&source=${encodeURIComponent(source)}`);
+      const text = await res.text();
+
+      try{
+        theoryList = JSON.parse(text);
+      }catch(e){
+        console.error(text);
+        theoryList = [];
+      }
+
+      renderTheoryList();
+      document.getElementById("heroTheoryCount").innerText = theoryList.length;
+    }
+
+    function renderTheoryList(){
+      const container = document.getElementById("theoryList");
+
+      if(!theoryList.length){
+        container.innerHTML = `
+          <div class="lesson-item">
+            <div class="lesson-left">
+              <div class="lesson-title">Chưa có bài lý thuyết</div>
+              <div class="lesson-sub">Nội dung lý thuyết sẽ hiển thị khi quản trị viên hoặc giáo viên nhập ở trang nhaplieu.</div>
+            </div>
+          </div>
+        `;
+        return;
+      }
+
+      container.innerHTML = theoryList.map((item, index) => `
+        <div class="lesson-item" onclick="previewTheory(${index}, this)">
+          <div class="lesson-left">
+            <div class="lesson-title">${item.title || "Bài lý thuyết"}</div>
+            <div class="lesson-sub">${item.file_name || "Tệp PDF"} • ${item.semester || ""}</div>
+          </div>
+        </div>
+      `).join("");
+    }
+
+    function previewTheory(index, el){
+      const item = theoryList[index];
+      if(!item) return;
+
+      document.querySelectorAll("#theoryList .lesson-item").forEach(x=>x.classList.remove("active"));
+      if(el) el.classList.add("active");
+
+      document.getElementById("previewBox").innerHTML = `
+        <div style="width:100%; text-align:left;">
+          <div style="font-size:13px; color:#2563eb; font-weight:800; margin-bottom:10px;">LÝ THUYẾT</div>
+          <div style="font-size:20px; font-weight:800; color:#111827; margin-bottom:10px;">${item.title || ""}</div>
+          <div style="font-size:14px; color:#64748b; margin-bottom:12px;"><strong>File:</strong> ${item.file_name || "PDF đã lưu"}</div>
+          <div style="font-size:14px; color:#374151; line-height:1.8; white-space:pre-wrap; margin-bottom:14px;">${item.description || "Chưa có mô tả."}</div>
+          ${item.file_path ? `<iframe src="${item.file_path}" title="${item.title || ''}"></iframe>` : `<div class="preview-center">Không có file PDF.</div>`}
+        </div>
+      `;
+    }
+
+    async function loadExerciseData(){
+      const res = await fetch(`api/get_exercise_sets.php?program_id=${encodeURIComponent(programId)}&source=${encodeURIComponent(source)}`);
+      const text = await res.text();
+
+      try{
+        exerciseSets = JSON.parse(text);
+      }catch(e){
+        console.error(text);
+        exerciseSets = [];
+      }
+
+      renderExerciseList();
+      document.getElementById("heroExerciseCount").innerText = exerciseSets.length;
+    }
+
+    function renderExerciseList(){
+      const container = document.getElementById("exerciseList");
+
+      if(!exerciseSets.length){
+        container.innerHTML = `
+          <div class="lesson-item">
+            <div class="lesson-left">
+              <div class="lesson-title">Chưa có bài tập</div>
+              <div class="lesson-sub">Bài tập sẽ xuất hiện khi được nhập ở trang nhaplieu.</div>
+            </div>
+          </div>
+        `;
+        return;
+      }
+
+      container.innerHTML = exerciseSets.map((item, index) => `
+        <div class="lesson-item" onclick="openExerciseSet(${index}, this)">
+          <div class="lesson-left">
+            <div class="lesson-title">${item.exercise_set_title || "Bộ bài tập"}</div>
+            <div class="lesson-sub">${item.lesson_title || ""} • ${item.total_questions || 0} câu hỏi</div>
+          </div>
+        </div>
+      `).join("");
+    }
+
+    async function openExerciseSet(index, el){
+      const setItem = exerciseSets[index];
+      if(!setItem) return;
+
+      document.querySelectorAll("#exerciseList .lesson-item").forEach(x=>x.classList.remove("active"));
+      if(el) el.classList.add("active");
+
+      currentExerciseSet = setItem;
+      selectedAnswers = {};
+      document.getElementById("scoreBox").style.display = "none";
+      document.getElementById("exerciseWorkArea").style.display = "block";
+      document.getElementById("exerciseWorkTitle").innerText = setItem.exercise_set_title || "Làm bài tập";
+
+      const res = await fetch(`api/get_exercise_questions.php?exercise_set_id=${encodeURIComponent(setItem.id)}&source=${encodeURIComponent(source)}`);
+      const text = await res.text();
+
+      try{
+        currentExerciseQuestions = JSON.parse(text);
+      }catch(e){
+        console.error(text);
+        currentExerciseQuestions = [];
+      }
+
+      renderExerciseQuestions();
+      document.getElementById("previewBox").innerHTML = `
+        <div style="font-size:14px; color:#374151; line-height:1.8;">
+          <div style="font-size:13px; color:#2563eb; font-weight:800; margin-bottom:10px;">BÀI TẬP</div>
+          <div style="font-size:20px; font-weight:800; color:#111827; margin-bottom:10px;">${setItem.exercise_set_title || ""}</div>
+          <div><strong>Bài lý thuyết:</strong> ${setItem.lesson_title || "Chưa rõ"}</div>
+          <div><strong>Số câu hỏi:</strong> ${currentExerciseQuestions.length}</div>
+        </div>
+      `;
+    }
+
+    function renderExerciseQuestions(){
+      const container = document.getElementById("exerciseQuestions");
+
+      if(!currentExerciseQuestions.length){
+        container.innerHTML = `<div class="preview-center">Chưa có câu hỏi trong bộ bài tập này.</div>`;
+        return;
+      }
+
+      container.innerHTML = currentExerciseQuestions.map((q, index) => {
+        if(q.question_type === "matching"){
+          const pairs = Array.isArray(q.pairs) ? q.pairs : [];
+          return `
+            <div class="question-card">
+              <div class="question-title">Câu ${index + 1}: ${q.question_text || ""}</div>
+              ${pairs.map(pair => `
+                <div class="matching-pair">
+                  <div class="matching-box">${pair.left || ""}</div>
+                  <div class="matching-box">${pair.right || ""}</div>
+                </div>
+              `).join("")}
+            </div>
+          `;
+        }
+
+        const options = Array.isArray(q.options) ? q.options : [];
+        return `
+          <div class="question-card">
+            <div class="question-title">Câu ${index + 1}: ${q.question_text || ""}</div>
+            ${options.map((opt, optIndex) => `
+              <div class="option-item" data-question="${index}" data-option="${opt.key}" onclick="selectOption(${index}, '${String(opt.key).replace(/'/g,"\\'")}', this)">
+                <strong>${opt.key}.</strong> ${opt.text || ""}
+              </div>
+            `).join("")}
+          </div>
+        `;
+      }).join("");
+    }
+
+    function selectOption(questionIndex, optionKey, el){
+      selectedAnswers[questionIndex] = optionKey;
+      document.querySelectorAll(`.option-item[data-question="${questionIndex}"]`).forEach(x=>x.classList.remove("selected"));
+      el.classList.add("selected");
+    }
+
+    function resetExerciseAnswers(){
+      selectedAnswers = {};
+      document.querySelectorAll(".option-item").forEach(x=>{
+        x.classList.remove("selected","correct","wrong");
+      });
+      document.getElementById("scoreBox").style.display = "none";
+    }
+
+    function submitExercise(){
+      if(!currentExerciseQuestions.length) return;
+
+      let total = 0;
+      let correct = 0;
+
+      currentExerciseQuestions.forEach((q, index) => {
+        if(q.question_type !== "multiple") return;
+        total++;
+
+        const correctOption = (q.options || []).find(opt => opt.isCorrect);
+        const userAnswer = selectedAnswers[index];
+
+        document.querySelectorAll(`.option-item[data-question="${index}"]`).forEach(el => {
+          const key = el.getAttribute("data-option");
+          el.classList.remove("correct","wrong");
+
+          if(correctOption && key === String(correctOption.key)){
+            el.classList.add("correct");
+          }
+
+          if(userAnswer && key === String(userAnswer) && correctOption && key !== String(correctOption.key)){
+            el.classList.add("wrong");
+          }
+        });
+
+        if(correctOption && String(userAnswer || "") === String(correctOption.key)){
+          correct++;
+        }
+      });
+
+      const scoreBox = document.getElementById("scoreBox");
+      scoreBox.style.display = "block";
+      scoreBox.innerText = `Kết quả: ${correct}/${total} câu đúng. Điểm tạm tính: ${total > 0 ? Math.round((correct / total) * 10 * 10) / 10 : 0}`;
+    }
+
+    function bindActiveMenu(){
+      moveBar(document.querySelector(".menu li.active"));
+    }
+
+    window.addEventListener("click", function(e){
+      const avatarBox = document.querySelector(".avatar-box");
+      const dropdown = document.getElementById("dropdownMenu");
+      if(avatarBox && !avatarBox.contains(e.target)){
+        dropdown.classList.remove("show");
+      }
+    });
+
+    window.onload = async function(){
+      bindActiveMenu();
+      bindTabs();
+      await loadProgramDetail();
+    };
+  </script>
+</body>
+</html>

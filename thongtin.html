@@ -1,0 +1,609 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>English for Kids - Thông tin học sinh</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+*{margin:0;padding:0;box-sizing:border-box;font-family:'Inter',sans-serif;}
+body{display:flex;background:linear-gradient(180deg,#fef7ff 0%,#f1f5f9 35%,#eefbff 100%);min-height:100vh;overflow-x:hidden;color:#0f172a;}
+.sidebar{width:260px;background:white;padding:30px 20px;box-shadow:0 18px 40px rgba(59,130,246,0.08);position:relative;border-right:1px solid #e0f2fe;}
+.logo{font-size:22px;font-weight:800;color:#2563eb;margin-bottom:40px;}
+.menu{list-style:none;position:relative;}
+.menu a{text-decoration:none;color:inherit;}
+.menu li{padding:14px 20px;margin-bottom:8px;border-radius:10px;color:#64748b;font-weight:500;cursor:pointer;transition:0.25s;}
+.menu li:hover{color:#3b82f6;background:#eff6ff;}
+.menu li.active{color:#3b82f6;font-weight:600;background:#eff6ff;}
+.active-bar{position:absolute;left:0;width:5px;height:42px;background:#3b82f6;border-radius:6px;transition:0.3s;}
+
+.main{flex:1;padding:32px;overflow-y:auto;}
+.topbar{display:flex;justify-content:flex-end;margin-bottom:22px;}
+.avatar-box{position:relative;cursor:pointer;}
+.avatar{width:44px;height:44px;border-radius:50%;background:linear-gradient(135deg,#60a5fa,#818cf8);display:flex;align-items:center;justify-content:center;color:white;font-weight:700;box-shadow:0 10px 24px rgba(59,130,246,0.28);}
+.dropdown{position:absolute;top:58px;right:0;background:white;border-radius:16px;box-shadow:0 16px 36px rgba(15,23,42,0.15);display:none;padding:14px;z-index:50;min-width:220px;border:1px solid #e2e8f0;}
+.dropdown.show{display:block;}
+.dropdown label{display:block;font-size:13px;font-weight:700;color:#334155;margin-bottom:8px;}
+.dropdown select{width:100%;padding:11px 12px;border:1px solid #dbeafe;border-radius:10px;background:#f8fbff;outline:none;margin-bottom:12px;font-size:14px;}
+.dropdown button{width:100%;border:none;background:none;text-align:left;padding:10px 12px;border-radius:10px;cursor:pointer;font-weight:700;color:#ef4444;}
+.dropdown button:hover{background:#fef2f2;}
+
+.hero{
+background:linear-gradient(135deg,#60a5fa 0%,#818cf8 50%,#22d3ee 100%);
+color:white;border-radius:30px;padding:34px;display:grid;grid-template-columns:1.2fr 0.8fr;
+gap:24px;align-items:center;position:relative;overflow:hidden;margin-bottom:24px;
+box-shadow:0 20px 45px rgba(96,165,250,0.25);
+}
+.hero::before{content:"";position:absolute;width:280px;height:280px;border-radius:50%;background:rgba(255,255,255,0.12);right:-70px;top:-80px;}
+.hero::after{content:"★";position:absolute;left:26px;top:18px;font-size:28px;color:rgba(255,255,255,0.75);transform:rotate(-12deg);}
+.hero-content,.hero-side{position:relative;z-index:2;}
+.hero-badge{display:inline-block;padding:9px 15px;border-radius:999px;background:rgba(255,255,255,0.18);border:1px solid rgba(255,255,255,0.22);font-size:13px;font-weight:800;margin-bottom:16px;}
+.hero h1{font-size:34px;margin-bottom:12px;line-height:1.25;}
+.hero p{font-size:15px;line-height:1.8;opacity:0.96;max-width:700px;}
+.hero-side{display:grid;gap:14px;}
+.hero-info{background:rgba(255,255,255,0.16);border:1px solid rgba(255,255,255,0.22);border-radius:22px;padding:20px;backdrop-filter:blur(8px);}
+.hero-info h3{font-size:14px;margin-bottom:8px;}
+.hero-info .big{font-size:34px;font-weight:800;line-height:1;margin-bottom:6px;}
+.hero-info p{font-size:14px;margin:0;}
+
+.grid{display:grid;grid-template-columns:1.1fr 0.9fr;gap:22px;margin-bottom:24px;}
+.card{background:white;border-radius:24px;padding:24px;box-shadow:0 16px 32px rgba(59,130,246,0.08);border:1px solid #e0f2fe;}
+.card-title{font-size:22px;font-weight:800;color:#0f172a;margin-bottom:18px;}
+
+.profile-header{display:flex;align-items:center;gap:18px;margin-bottom:22px;flex-wrap:wrap;}
+.profile-avatar{width:92px;height:92px;border-radius:50%;background:linear-gradient(135deg,#60a5fa,#818cf8);display:flex;align-items:center;justify-content:center;color:white;font-size:30px;font-weight:800;box-shadow:0 12px 28px rgba(59,130,246,0.22);}
+.profile-name h2{font-size:28px;margin-bottom:6px;color:#0f172a;}
+.profile-name p{font-size:14px;color:#64748b;line-height:1.7;}
+
+.info-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:14px;}
+.info-box{background:#f8fbff;border:1px solid #dbeafe;border-radius:18px;padding:16px;}
+.info-box span{display:block;font-size:12px;font-weight:800;color:#64748b;margin-bottom:8px;text-transform:uppercase;letter-spacing:0.4px;}
+.info-box strong{font-size:16px;color:#0f172a;line-height:1.6;}
+
+.progress-list{display:grid;gap:14px;}
+.progress-item{background:#f8fbff;border:1px solid #dbeafe;border-radius:18px;padding:16px;}
+.progress-item h4{font-size:16px;color:#0f172a;margin-bottom:10px;}
+.progress-item p{font-size:13px;color:#64748b;margin-top:8px;line-height:1.7;}
+.track{width:100%;height:10px;background:#e2e8f0;border-radius:999px;overflow:hidden;}
+.fill{height:100%;border-radius:999px;background:linear-gradient(90deg,#60a5fa,#818cf8);}
+
+.stats{display:grid;grid-template-columns:repeat(4,1fr);gap:14px;margin-bottom:22px;}
+.stat-card{background:white;border-radius:22px;padding:20px;box-shadow:0 14px 30px rgba(14,165,233,0.08);border:1px solid #e0f2fe;text-align:center;}
+.stat-card .number{font-size:30px;font-weight:800;color:#2563eb;margin-bottom:8px;}
+.stat-card p{font-size:13px;color:#64748b;line-height:1.6;}
+
+.timeline{display:grid;gap:14px;}
+.timeline-item{background:#f8fbff;border:1px solid #dbeafe;border-radius:18px;padding:16px;display:flex;justify-content:space-between;gap:14px;align-items:flex-start;}
+.timeline-item h4{font-size:16px;color:#0f172a;margin-bottom:6px;}
+.timeline-item p{font-size:14px;color:#64748b;line-height:1.7;}
+.timeline-date{background:#eff6ff;color:#2563eb;padding:8px 12px;border-radius:999px;font-size:12px;font-weight:800;white-space:nowrap;}
+
+.badge-row{display:flex;flex-wrap:wrap;gap:12px;}
+.badge-card{flex:1;min-width:140px;background:#f8fbff;border:1px solid #dbeafe;border-radius:18px;padding:16px;text-align:center;}
+.badge-card .icon{font-size:28px;margin-bottom:10px;}
+.badge-card h4{font-size:15px;color:#0f172a;margin-bottom:6px;}
+.badge-card p{font-size:13px;color:#64748b;line-height:1.6;}
+
+.note-box{background:linear-gradient(135deg,#eff6ff,#f5f3ff);border:1px solid #dbeafe;border-radius:20px;padding:18px;}
+.note-box h4{font-size:16px;color:#2563eb;margin-bottom:10px;}
+.note-box p{font-size:14px;color:#475569;line-height:1.8;}
+.empty-note{background:#f8fbff;border:1px dashed #bfdbfe;border-radius:18px;padding:16px;color:#64748b;font-size:14px;line-height:1.8;}
+
+.report-card{background:white;border-radius:24px;padding:24px;box-shadow:0 16px 32px rgba(59,130,246,0.08);border:1px solid #e0f2fe;margin-bottom:24px;}
+.report-header{display:flex;justify-content:space-between;gap:12px;align-items:center;flex-wrap:wrap;margin-bottom:18px;}
+.report-title{font-size:22px;font-weight:800;color:#0f172a;}
+.report-sub{font-size:14px;color:#64748b;line-height:1.7;}
+.chart-wrap{display:grid;gap:16px;}
+.chart-row{display:grid;grid-template-columns:220px 1fr 90px;gap:14px;align-items:center;}
+.chart-label{font-size:14px;font-weight:700;color:#334155;line-height:1.5;}
+.chart-bar-bg{width:100%;height:18px;background:#e2e8f0;border-radius:999px;overflow:hidden;}
+.chart-bar{height:100%;border-radius:999px;background:linear-gradient(90deg,#60a5fa,#818cf8);}
+.chart-score{font-size:13px;font-weight:800;color:#2563eb;text-align:right;}
+.table-wrap{overflow:auto;margin-top:22px;}
+.report-table{width:100%;border-collapse:collapse;min-width:700px;}
+.report-table th,.report-table td{padding:12px 10px;border-bottom:1px solid #e5e7eb;text-align:left;font-size:14px;}
+.report-table th{background:#f8fbff;color:#334155;font-size:13px;font-weight:800;}
+.report-table td{color:#475569;}
+.score-badge{display:inline-flex;padding:6px 10px;border-radius:999px;font-size:12px;font-weight:800;}
+.score-good{background:#dcfce7;color:#166534;}
+.score-mid{background:#fef3c7;color:#92400e;}
+.score-low{background:#fee2e2;color:#b91c1c;}
+
+@media(max-width:1100px){
+  .hero,.grid{grid-template-columns:1fr;}
+  .stats{grid-template-columns:repeat(2,1fr);}
+  .chart-row{grid-template-columns:1fr;}
+}
+
+@media(max-width:768px){
+  body{flex-direction:column;}
+  .sidebar{width:100%;}
+  .main{padding:20px;}
+  .info-grid,.stats{grid-template-columns:1fr;}
+  .timeline-item{flex-direction:column;}
+}
+</style>
+</head>
+<body>
+
+<div class="sidebar">
+  <div class="logo">English for Kids</div>
+  <ul class="menu" id="menu">
+    <div class="active-bar" id="activeBar"></div>
+    <a href="trangchuhocsinh.html"><li>Trang chủ</li></a>
+    <a href="QLchuongtrinhhocsinh.html"><li>Chương trình học</li></a>
+    <a href="QLbaitaphocsinh.html"><li>Bài tập</li></a>
+    <a href="thongtin.html"><li class="active">Thông tin cá nhân</li></a>
+  </ul>
+</div>
+
+<div class="main">
+  <div class="topbar">
+    <div class="avatar-box" onclick="toggleMenu(event)">
+      <div class="avatar" id="topAvatar">HS</div>
+      <div class="dropdown" id="dropdownMenu">
+        <label for="gradeSelect">Chọn khối</label>
+        <select id="gradeSelect" onchange="changeGrade(this.value)">
+          <option value="Lớp 1">Lớp 1</option>
+          <option value="Lớp 2">Lớp 2</option>
+          <option value="Lớp 3">Lớp 3</option>
+          <option value="Lớp 4">Lớp 4</option>
+          <option value="Lớp 5">Lớp 5</option>
+        </select>
+        <button onclick="confirmLogout()">Đăng xuất</button>
+      </div>
+    </div>
+  </div>
+
+  <section class="hero">
+    <div class="hero-content">
+      <div class="hero-badge">Hồ sơ học sinh</div>
+      <h1>Thông tin cá nhân và quá trình học tập</h1>
+      <p>
+        Trang này lấy dữ liệu thật từ hệ thống học sinh, lịch sử học lý thuyết và bài tập đã nộp để tổng hợp báo cáo cho từng em.
+      </p>
+    </div>
+
+    <div class="hero-side">
+      <div class="hero-info">
+        <h3>Khối đang học</h3>
+        <div class="big" id="heroGrade">1</div>
+        <p id="heroGradeText">Đang hiển thị thông tin cho Lớp 1</p>
+      </div>
+      <div class="hero-info">
+        <h3>Bài tập đã hoàn thành</h3>
+        <div class="big" id="heroDone">0</div>
+        <p id="heroDoneText">Dữ liệu được lấy từ lịch sử làm bài của học sinh</p>
+      </div>
+    </div>
+  </section>
+
+  <div class="stats">
+    <div class="stat-card">
+      <div class="number" id="statPrograms">0</div>
+      <p>Chương trình phù hợp</p>
+    </div>
+    <div class="stat-card">
+      <div class="number" id="statTheory">0</div>
+      <p>Bài lý thuyết đã học</p>
+    </div>
+    <div class="stat-card">
+      <div class="number" id="statExercises">0</div>
+      <p>Bài tập đã nộp</p>
+    </div>
+    <div class="stat-card">
+      <div class="number" id="statScore">0.0</div>
+      <p>Điểm trung bình / 10</p>
+    </div>
+  </div>
+
+  <div class="report-card">
+    <div class="report-header">
+      <div>
+        <div class="report-title">Sơ đồ báo cáo học tập</div>
+        <div class="report-sub">Báo cáo số bài lý thuyết đã học, số bài đã làm và điểm số của từng bài.</div>
+      </div>
+    </div>
+
+    <div class="chart-wrap" id="chartWrap"></div>
+
+    <div class="table-wrap">
+      <table class="report-table">
+        <thead>
+          <tr>
+            <th>Tên bài</th>
+            <th>Ngày nộp</th>
+            <th>Câu đúng</th>
+            <th>Tự luận</th>
+            <th>Điểm</th>
+            <th>Đánh giá</th>
+          </tr>
+        </thead>
+        <tbody id="reportTableBody"></tbody>
+      </table>
+    </div>
+  </div>
+
+  <div class="grid">
+    <div>
+      <div class="card">
+        <div class="card-title">Thông tin cá nhân</div>
+        <div class="profile-header">
+          <div class="profile-avatar" id="profileAvatar">HS</div>
+          <div class="profile-name">
+            <h2 id="studentName">Học sinh</h2>
+            <p id="studentSubtitle">Thông tin được lấy từ hệ thống.</p>
+          </div>
+        </div>
+
+        <div class="info-grid">
+          <div class="info-box">
+            <span>Mã học sinh</span>
+            <strong id="studentCode">Chưa có</strong>
+          </div>
+          <div class="info-box">
+            <span>Khối lớp</span>
+            <strong id="studentGrade">Lớp 1</strong>
+          </div>
+          <div class="info-box">
+            <span>Ngày sinh</span>
+            <strong id="studentBirthday">Chưa cập nhật</strong>
+          </div>
+          <div class="info-box">
+            <span>Giới tính</span>
+            <strong id="studentGender">Chưa cập nhật</strong>
+          </div>
+          <div class="info-box">
+            <span>Địa chỉ</span>
+            <strong id="studentAddress">Chưa cập nhật</strong>
+          </div>
+          <div class="info-box">
+            <span>SĐT phụ huynh</span>
+            <strong id="studentParentPhone">Chưa cập nhật</strong>
+          </div>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="card-title">Hoạt động gần đây</div>
+        <div class="timeline" id="timelineBox"></div>
+      </div>
+    </div>
+
+    <div>
+      <div class="card">
+        <div class="card-title">Tiến độ học tập</div>
+        <div class="progress-list">
+          <div class="progress-item">
+            <h4>Hoàn thành bài tập</h4>
+            <div class="track"><div class="fill" id="progressExercises" style="width:0%"></div></div>
+            <p id="progressExercisesText">Chưa có dữ liệu bài tập.</p>
+          </div>
+          <div class="progress-item">
+            <h4>Theo dõi lý thuyết</h4>
+            <div class="track"><div class="fill" id="progressTheory" style="width:0%"></div></div>
+            <p id="progressTheoryText">Chưa có dữ liệu lý thuyết.</p>
+          </div>
+          <div class="progress-item">
+            <h4>Điểm số trung bình</h4>
+            <div class="track"><div class="fill" id="progressScore" style="width:0%"></div></div>
+            <p id="progressScoreText">Chưa có dữ liệu điểm.</p>
+          </div>
+          <div class="progress-item">
+            <h4>Mức độ học đều</h4>
+            <div class="track"><div class="fill" id="progressStreak" style="width:0%"></div></div>
+            <p id="progressStreakText">Hãy duy trì học tập mỗi tuần để tiến bộ tốt hơn.</p>
+          </div>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="card-title">Huy hiệu của em</div>
+        <div class="badge-row" id="badgeBox"></div>
+      </div>
+
+      <div class="card">
+        <div class="card-title">Nhận xét tổng hợp</div>
+        <div class="note-box">
+          <h4>Nhận xét hệ thống</h4>
+          <p id="teacherComment">Hệ thống sẽ tự tạo nhận xét dựa trên việc học và làm bài của học sinh.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+let selectedGrade = localStorage.getItem("selectedStudentGrade") || "Lớp 1";
+let dashboardData = null;
+
+function toggleMenu(event){
+  event.stopPropagation();
+  document.getElementById("dropdownMenu").classList.toggle("show");
+}
+
+async function confirmLogout(){
+  try{
+    await fetch("api/logout.php");
+  }catch(e){}
+  localStorage.removeItem("role");
+  localStorage.removeItem("user_name");
+  localStorage.removeItem("logged_in");
+  localStorage.removeItem("selectedStudentGrade");
+  window.location.href="dangnhap.html";
+}
+
+function changeGrade(grade){
+  localStorage.setItem("selectedStudentGrade", grade);
+  selectedGrade = grade;
+  loadProfile();
+}
+
+function scoreClass(score10){
+  if(score10 >= 8) return "score-good";
+  if(score10 >= 5) return "score-mid";
+  return "score-low";
+}
+
+function scoreLabel(score10){
+  if(score10 >= 8) return "Tốt";
+  if(score10 >= 5) return "Đạt";
+  return "Cần cố gắng";
+}
+
+function buildBadges(stats){
+  const badges = [];
+  if(stats.exerciseDoneCount >= 1) badges.push({ icon:"📝", title:"Bắt đầu nộp bài", text:"Đã có bài tập đầu tiên được nộp." });
+  if(stats.exerciseDoneCount >= 5) badges.push({ icon:"⭐", title:"Chăm chỉ", text:"Hoàn thành từ 5 bài tập trở lên." });
+  if(stats.averageScore10 >= 8) badges.push({ icon:"🏅", title:"Học tốt", text:"Điểm trung bình từ 8 trở lên." });
+  if(stats.theoryViewedCount >= 3) badges.push({ icon:"📘", title:"Ham học", text:"Đã học nhiều bài lý thuyết." });
+  if(!badges.length) badges.push({ icon:"🌱", title:"Khởi đầu tốt", text:"Tiếp tục học và làm bài để mở khóa thêm huy hiệu." });
+  return badges;
+}
+
+function renderBadges(badges){
+  const box = document.getElementById("badgeBox");
+  box.innerHTML = badges.map(item => `
+    <div class="badge-card">
+      <div class="icon">${item.icon}</div>
+      <h4>${item.title}</h4>
+      <p>${item.text}</p>
+    </div>
+  `).join("");
+}
+
+function renderTimeline(list){
+  const box = document.getElementById("timelineBox");
+  if(!list.length){
+    box.innerHTML = `<div class="empty-note">Chưa có hoạt động nào được ghi nhận. Sau khi học lý thuyết và nộp bài, hệ thống sẽ hiển thị hoạt động tại đây.</div>`;
+    return;
+  }
+
+  box.innerHTML = list.map(item => `
+    <div class="timeline-item">
+      <div>
+        <h4>${item.title}</h4>
+        <p>${item.desc}</p>
+      </div>
+      <div class="timeline-date">${item.date || "Gần đây"}</div>
+    </div>
+  `).join("");
+}
+
+function renderChartAndTable(results, theoryCount){
+  const chartWrap = document.getElementById("chartWrap");
+  const tableBody = document.getElementById("reportTableBody");
+
+  const rows = [];
+
+  rows.push(`
+    <div class="chart-row">
+      <div class="chart-label">Bài lý thuyết đã học</div>
+      <div class="chart-bar-bg">
+        <div class="chart-bar" style="width:${Math.min(theoryCount * 12, 100)}%"></div>
+      </div>
+      <div class="chart-score">${theoryCount} bài</div>
+    </div>
+  `);
+
+  rows.push(`
+    <div class="chart-row">
+      <div class="chart-label">Bài tập đã làm</div>
+      <div class="chart-bar-bg">
+        <div class="chart-bar" style="width:${Math.min(results.length * 12, 100)}%"></div>
+      </div>
+      <div class="chart-score">${results.length} bài</div>
+    </div>
+  `);
+
+  results.forEach(item => {
+    const score10 = item.maxScore > 0 ? ((item.score / item.maxScore) * 10) : 0;
+    rows.push(`
+      <div class="chart-row">
+        <div class="chart-label">${item.title}</div>
+        <div class="chart-bar-bg">
+          <div class="chart-bar" style="width:${Math.max(0, Math.min(score10 * 10, 100))}%"></div>
+        </div>
+        <div class="chart-score">${score10.toFixed(1)}/10</div>
+      </div>
+    `);
+  });
+
+  chartWrap.innerHTML = rows.join("");
+
+  if(!results.length){
+    tableBody.innerHTML = `
+      <tr>
+        <td colspan="6">Chưa có dữ liệu bài tập đã nộp.</td>
+      </tr>
+    `;
+    return;
+  }
+
+  tableBody.innerHTML = results.map(item => {
+    const score10 = item.maxScore > 0 ? ((item.score / item.maxScore) * 10) : 0;
+    return `
+      <tr>
+        <td>${item.title}</td>
+        <td>${item.submittedAt || "Chưa rõ"}</td>
+        <td>${item.correctCount}</td>
+        <td>${item.essayCount}</td>
+        <td>${item.score}/${item.maxScore}</td>
+        <td><span class="score-badge ${scoreClass(score10)}">${scoreLabel(score10)}</span></td>
+      </tr>
+    `;
+  }).join("");
+}
+
+function fillWidth(value){
+  const safe = Math.max(0, Math.min(100, Number(value) || 0));
+  return safe + "%";
+}
+
+function buildComment(stats, student){
+  const name = student.name || "Học sinh";
+  const parts = [];
+
+  if(stats.exerciseDoneCount === 0){
+    parts.push(`${name} chưa có dữ liệu nộp bài tập, cần bắt đầu làm bài để hệ thống theo dõi tiến độ rõ hơn.`);
+  }else if(stats.averageScore10 >= 8.5){
+    parts.push(`${name} đang học rất tốt, hoàn thành bài tập đều và có kết quả nổi bật.`);
+  }else if(stats.averageScore10 >= 7){
+    parts.push(`${name} có tiến độ ổn định, cần duy trì đều việc học và luyện thêm để nâng điểm số.`);
+  }else{
+    parts.push(`${name} cần dành thêm thời gian ôn tập bài cũ và hoàn thành bài tập đầy đủ hơn.`);
+  }
+
+  if(stats.theoryViewedCount > 0){
+    parts.push(`Học sinh đã học ${stats.theoryViewedCount} bài lý thuyết.`);
+  }
+
+  if(student.address){
+    parts.push(`Thông tin địa chỉ hiện có là ${student.address}.`);
+  }
+
+  if(student.phone){
+    parts.push(`Số điện thoại phụ huynh đang lưu là ${student.phone}.`);
+  }
+
+  return parts.join(" ");
+}
+
+async function loadProfile(){
+  const res = await fetch(`api/get_student_profile_dashboard.php?grade=${encodeURIComponent(selectedGrade)}`);
+  const data = await res.json();
+
+  if(!data.success){
+    alert(data.message || "Không tải được dữ liệu học sinh");
+    window.location.href = "dangnhap.html";
+    return;
+  }
+
+  dashboardData = data;
+  renderDashboard();
+}
+
+function renderDashboard(){
+  const student = dashboardData.student;
+  const stats = dashboardData.stats;
+  const results = dashboardData.exerciseResults || [];
+  const timeline = dashboardData.timeline || [];
+  const theoryHistory = dashboardData.theoryHistory || [];
+
+  document.getElementById("gradeSelect").value = dashboardData.selectedGrade || selectedGrade;
+  document.getElementById("heroGrade").textContent = (dashboardData.selectedGrade || selectedGrade).replace("Lớp ", "");
+  document.getElementById("heroGradeText").textContent = `Đang hiển thị thông tin cho ${dashboardData.selectedGrade || selectedGrade}`;
+  document.getElementById("heroDone").textContent = stats.exerciseDoneCount;
+  document.getElementById("heroDoneText").textContent = stats.exerciseDoneCount ? "Dữ liệu được lấy từ lịch sử làm bài của học sinh" : "Chưa có bài tập nào được nộp";
+
+  document.getElementById("studentName").textContent = student.name || "Học sinh";
+  document.getElementById("studentSubtitle").textContent = `${student.name || "Học sinh"} • ${dashboardData.selectedGrade || selectedGrade} • Mã: ${student.studentCode || "Chưa có mã"}`;
+  document.getElementById("studentCode").textContent = student.studentCode || "Chưa có";
+  document.getElementById("studentGrade").textContent = dashboardData.selectedGrade || selectedGrade;
+  document.getElementById("studentBirthday").textContent = student.birthday || "Chưa cập nhật";
+  document.getElementById("studentGender").textContent = student.gender || "Chưa cập nhật";
+  document.getElementById("studentAddress").textContent = student.address || "Chưa cập nhật";
+  document.getElementById("studentParentPhone").textContent = student.phone || "Chưa cập nhật";
+
+  const initials = (student.name || "HS").split(" ").filter(Boolean).map(w => w[0]).slice(-2).join("").toUpperCase() || "HS";
+  document.getElementById("profileAvatar").textContent = initials;
+  document.getElementById("topAvatar").textContent = initials;
+
+  document.getElementById("statPrograms").textContent = stats.programCount;
+  document.getElementById("statTheory").textContent = stats.theoryViewedCount;
+  document.getElementById("statExercises").textContent = stats.exerciseDoneCount;
+  document.getElementById("statScore").textContent = Number(stats.averageScore10 || 0).toFixed(1);
+
+  document.getElementById("progressExercises").style.width = fillWidth(stats.exerciseDoneCount * 10);
+  document.getElementById("progressExercisesText").textContent = stats.exerciseDoneCount
+    ? `Đã nộp ${stats.exerciseDoneCount} bài tập.`
+    : "Chưa có dữ liệu bài tập được nộp.";
+
+  document.getElementById("progressTheory").style.width = fillWidth(stats.theoryViewedCount * 15);
+  document.getElementById("progressTheoryText").textContent = stats.theoryViewedCount
+    ? `Đã học ${stats.theoryViewedCount} bài lý thuyết.`
+    : "Chưa có dữ liệu lý thuyết đã học.";
+
+  document.getElementById("progressScore").style.width = fillWidth((stats.averageScore10 || 0) * 10);
+  document.getElementById("progressScoreText").textContent = stats.exerciseDoneCount
+    ? `Điểm trung bình hiện tại là ${Number(stats.averageScore10 || 0).toFixed(1)} / 10.`
+    : "Chưa có đủ dữ liệu điểm để tính trung bình.";
+
+  const streakValue = Math.min(100, (stats.programCount * 20) + (stats.theoryViewedCount * 10) + (stats.exerciseDoneCount * 8));
+  document.getElementById("progressStreak").style.width = fillWidth(streakValue);
+  document.getElementById("progressStreakText").textContent = streakValue >= 60
+    ? "Học sinh đang có nhịp học khá đều và tích cực."
+    : "Hãy duy trì học đều hơn để tiến bộ nhanh hơn.";
+
+  renderTimeline(timeline);
+  renderBadges(buildBadges(stats));
+  renderChartAndTable(results, theoryHistory.length);
+  document.getElementById("teacherComment").textContent = buildComment(stats, student);
+}
+
+const menuItems=document.querySelectorAll(".menu li");
+const activeBar=document.getElementById("activeBar");
+
+function moveBar(element){
+  if(!element) return;
+  activeBar.style.top=element.offsetTop+"px";
+  activeBar.style.height=element.offsetHeight+"px";
+}
+
+menuItems.forEach(item=>{
+  item.addEventListener("click",function(){
+    menuItems.forEach(i=>i.classList.remove("active"));
+    this.classList.add("active");
+    moveBar(this);
+  });
+});
+
+window.onload=function(){
+  const currentPage = window.location.pathname.split("/").pop();
+  let activeFound = false;
+
+  document.querySelectorAll(".menu a").forEach(link=>{
+    const href = link.getAttribute("href");
+    if(href === currentPage){
+      const li = link.querySelector("li");
+      li.classList.add("active");
+      moveBar(li);
+      activeFound = true;
+    }
+  });
+
+  if(!activeFound){
+    moveBar(document.querySelector(".menu li.active"));
+  }
+
+  loadProfile();
+};
+
+document.addEventListener("click", function(e){
+  if(!e.target.closest(".avatar-box")){
+    document.getElementById("dropdownMenu").classList.remove("show");
+  }
+});
+</script>
+</body>
+</html>

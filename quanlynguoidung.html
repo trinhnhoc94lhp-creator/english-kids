@@ -1,0 +1,335 @@
+<!DOCTYPE html>
+<html lang="vi">
+
+<head>
+
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>Trang quản lý</title>
+
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+
+<style>
+
+*{
+margin:0;
+padding:0;
+box-sizing:border-box;
+font-family:'Inter',sans-serif;
+}
+
+body{
+display:flex;
+background:#f8fafc;
+min-height:100vh;
+}
+
+/* SIDEBAR */
+
+.sidebar{
+width:260px;
+background:white;
+padding:30px 20px;
+box-shadow:0 15px 35px rgba(0,0,0,0.05);
+position:relative;
+}
+
+.logo{
+font-size:22px;
+font-weight:800;
+color:#3b82f6;
+margin-bottom:40px;
+}
+
+/* MENU */
+
+.menu{
+list-style:none;
+position:relative;
+}
+
+.menu a{
+text-decoration:none;
+}
+
+/* menu chính */
+
+.menu li{
+padding:14px 20px;
+margin-bottom:8px;
+border-radius:10px;
+color:#64748b;
+font-weight:500;
+cursor:pointer;
+transition:0.25s;
+}
+
+.menu li:hover{
+color:#3b82f6;
+background:#eff6ff;
+}
+
+.menu li.active{
+color:#3b82f6;
+font-weight:600;
+}
+
+/* submenu */
+
+.submenu{
+display:none;
+margin-left:20px;
+}
+
+.submenu li{
+font-size:14px;
+padding:10px 15px;
+}
+
+.menu-parent.active .submenu{
+display:block;
+}
+
+/* THANH XANH */
+
+.active-bar{
+position:absolute;
+left:0;
+width:5px;
+height:42px;
+background:#3b82f6;
+border-radius:6px;
+transition:0.3s;
+}
+
+/* MAIN */
+
+.main{
+flex:1;
+padding:40px;
+}
+
+/* TOPBAR */
+
+.topbar{
+display:flex;
+justify-content:flex-end;
+margin-bottom:30px;
+}
+
+.avatar-box{
+position:relative;
+cursor:pointer;
+}
+
+.avatar{
+width:42px;
+height:42px;
+border-radius:50%;
+background:linear-gradient(135deg,#3b82f6,#6366f1);
+display:flex;
+align-items:center;
+justify-content:center;
+color:white;
+font-weight:600;
+}
+
+.dropdown{
+position:absolute;
+top:55px;
+right:0;
+background:white;
+border-radius:10px;
+box-shadow:0 10px 25px rgba(0,0,0,0.1);
+display:none;
+padding:10px;
+}
+
+.dropdown button{
+border:none;
+background:none;
+cursor:pointer;
+padding:8px 12px;
+color:red;
+font-weight:500;
+}
+
+.dropdown.show{
+display:block;
+}
+
+/* CONTENT */
+
+.title{
+font-size:28px;
+font-weight:700;
+margin-bottom:20px;
+}
+
+.card{
+background:white;
+padding:30px;
+border-radius:16px;
+box-shadow:0 10px 25px rgba(0,0,0,0.05);
+}
+
+</style>
+
+</head>
+
+<body>
+
+<!-- SIDEBAR -->
+
+<div class="sidebar">
+
+<div class="logo">
+English for Kids
+</div>
+
+<ul class="menu" id="menu">
+
+<div class="active-bar" id="activeBar"></div>
+
+<a href="trangchu.html">
+<li>Trang chủ</li>
+</a>
+
+<a href="QLchuongtrinh.html">
+<li>QL Chương trình</li>
+</a>
+
+<a href="QLbai.html">
+<li>QL Bài học</li>
+</a>
+
+<!-- MENU CHA -->
+
+<li class="menu-parent" onclick="toggleSubmenu(this)">
+QL Người dùng
+
+<ul class="submenu">
+
+<a href="hocsinh.html">
+<li>Học sinh</li>
+</a>
+
+<a href="giaovien.html">
+<li>Giáo viên</li>
+</a>
+
+</ul>
+
+</li>
+
+<a href="baocao.html">
+<li>Báo cáo</li>
+</a>
+
+<a href="caidat.html">
+<li>Cài đặt</li>
+</a>
+
+</ul>
+
+</div>
+
+<!-- MAIN -->
+
+<div class="main">
+
+<div class="topbar">
+
+<div class="avatar-box" onclick="toggleMenu()">
+
+<div class="avatar">AD</div>
+
+<div class="dropdown" id="dropdownMenu">
+
+<button onclick="logout()">Đăng xuất</button>
+
+</div>
+
+</div>
+
+</div>
+
+<div class="title">
+Trang Dashboard
+</div>
+
+<div class="card">
+
+Nội dung trang của bạn
+
+</div>
+
+</div>
+
+<script>
+
+/* avatar dropdown */
+
+function toggleMenu(){
+document.getElementById("dropdownMenu").classList.toggle("show");
+}
+
+function logout(){
+window.location.href="dangnhap.html";
+}
+
+/* submenu */
+
+function toggleSubmenu(menu){
+menu.classList.toggle("active");
+}
+
+/* THANH XANH TRƯỢT */
+
+const menuItems = document.querySelectorAll(".menu li");
+const activeBar = document.getElementById("activeBar");
+
+function moveBar(element){
+
+const top = element.offsetTop;
+const height = element.offsetHeight;
+
+activeBar.style.top = top + "px";
+activeBar.style.height = height + "px";
+
+}
+
+menuItems.forEach(item=>{
+
+item.addEventListener("click",function(){
+
+menuItems.forEach(i=>i.classList.remove("active"));
+this.classList.add("active");
+
+moveBar(this);
+
+})
+
+});
+
+const currentPage = window.location.pathname.split("/").pop();
+
+document.querySelectorAll(".menu a").forEach(link=>{
+
+if(link.getAttribute("href")===currentPage){
+
+const li=link.querySelector("li");
+
+li.classList.add("active");
+
+moveBar(li);
+
+}
+
+});
+
+</script>
+
+</body>
+</html>

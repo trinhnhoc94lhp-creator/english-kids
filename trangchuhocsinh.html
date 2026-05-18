@@ -1,0 +1,1105 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>English for Kids - Trang chủ học sinh</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <style>
+    *{
+      margin:0;
+      padding:0;
+      box-sizing:border-box;
+      font-family:'Inter',sans-serif;
+    }
+
+    body{
+      display:flex;
+      background:#f1f5f9;
+      min-height:100vh;
+      overflow-x:hidden;
+      color:#0f172a;
+    }
+
+    .sidebar{
+      width:260px;
+      background:white;
+      padding:30px 20px;
+      box-shadow:0 15px 35px rgba(0,0,0,0.05);
+      position:relative;
+      z-index:5;
+      flex-shrink:0;
+    }
+
+    .logo{
+      font-size:22px;
+      font-weight:800;
+      color:#3b82f6;
+      margin-bottom:40px;
+    }
+
+    .menu{
+      list-style:none;
+      position:relative;
+    }
+
+    .menu a{
+      text-decoration:none;
+      color:inherit;
+    }
+
+    .menu li{
+      padding:14px 20px;
+      margin-bottom:8px;
+      border-radius:10px;
+      color:#64748b;
+      font-weight:500;
+      cursor:pointer;
+      transition:0.25s;
+    }
+
+    .menu li:hover{
+      color:#3b82f6;
+      background:#eff6ff;
+    }
+
+    .menu li.active{
+      color:#3b82f6;
+      font-weight:600;
+      background:#eff6ff;
+    }
+
+    .active-bar{
+      position:absolute;
+      left:0;
+      width:5px;
+      height:42px;
+      background:#3b82f6;
+      border-radius:6px;
+      transition:0.3s;
+    }
+
+    .main{
+      flex:1;
+      padding:32px;
+      overflow-y:auto;
+    }
+
+    .topbar{
+      display:flex;
+      justify-content:space-between;
+      align-items:center;
+      gap:14px;
+      margin-bottom:22px;
+      flex-wrap:wrap;
+    }
+
+    .student-greet h2{
+      font-size:28px;
+      font-weight:800;
+      color:#0f172a;
+      margin-bottom:6px;
+    }
+
+    .student-greet p{
+      font-size:14px;
+      color:#64748b;
+      line-height:1.7;
+    }
+
+    .avatar-box{
+      position:relative;
+      cursor:pointer;
+    }
+
+    .avatar{
+      width:44px;
+      height:44px;
+      border-radius:50%;
+      background:linear-gradient(135deg,#3b82f6,#6366f1);
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      color:white;
+      font-weight:700;
+      box-shadow:0 10px 24px rgba(59,130,246,0.28);
+    }
+
+    .dropdown{
+      position:absolute;
+      top:58px;
+      right:0;
+      background:white;
+      border-radius:16px;
+      box-shadow:0 16px 36px rgba(15,23,42,0.15);
+      display:none;
+      padding:14px;
+      z-index:50;
+      min-width:230px;
+      border:1px solid #e2e8f0;
+    }
+
+    .dropdown.show{
+      display:block;
+    }
+
+    .dropdown label{
+      display:block;
+      font-size:13px;
+      font-weight:700;
+      color:#334155;
+      margin-bottom:8px;
+    }
+
+    .dropdown select{
+      width:100%;
+      padding:11px 12px;
+      border:1px solid #dbeafe;
+      border-radius:10px;
+      background:#f8fbff;
+      outline:none;
+      margin-bottom:12px;
+      font-size:14px;
+    }
+
+    .logout-btn{
+      width:100%;
+      border:none;
+      background:none;
+      text-align:left;
+      padding:10px 12px;
+      border-radius:10px;
+      color:#ef4444;
+      font-weight:600;
+      cursor:pointer;
+    }
+
+    .logout-btn:hover{
+      background:#fef2f2;
+    }
+
+    .hero{
+      background:linear-gradient(135deg,#3b82f6 0%, #6366f1 100%);
+      border-radius:28px;
+      padding:38px;
+      color:white;
+      display:grid;
+      grid-template-columns:1.2fr 0.8fr;
+      gap:28px;
+      align-items:center;
+      position:relative;
+      overflow:hidden;
+      box-shadow:0 18px 40px rgba(59,130,246,0.22);
+      margin-bottom:26px;
+    }
+
+    .hero::before{
+      content:"";
+      position:absolute;
+      width:320px;
+      height:320px;
+      border-radius:50%;
+      background:rgba(255,255,255,0.08);
+      right:-90px;
+      top:-100px;
+    }
+
+    .hero::after{
+      content:"";
+      position:absolute;
+      width:240px;
+      height:240px;
+      border-radius:50%;
+      background:rgba(255,255,255,0.07);
+      left:-80px;
+      bottom:-100px;
+    }
+
+    .hero-content{
+      position:relative;
+      z-index:2;
+    }
+
+    .hero-badge-top{
+      display:inline-block;
+      padding:8px 14px;
+      border-radius:999px;
+      background:rgba(255,255,255,0.16);
+      border:1px solid rgba(255,255,255,0.2);
+      font-size:13px;
+      font-weight:700;
+      margin-bottom:16px;
+    }
+
+    .hero h1{
+      font-size:38px;
+      line-height:1.25;
+      margin-bottom:14px;
+    }
+
+    .hero p{
+      font-size:16px;
+      line-height:1.8;
+      opacity:0.96;
+      max-width:700px;
+      margin-bottom:20px;
+    }
+
+    .hero-actions{
+      display:flex;
+      flex-wrap:wrap;
+      gap:12px;
+    }
+
+    .hero-btn{
+      border:none;
+      border-radius:14px;
+      padding:12px 18px;
+      font-size:14px;
+      font-weight:700;
+      cursor:pointer;
+      transition:0.25s;
+    }
+
+    .hero-btn.primary{
+      background:white;
+      color:#2563eb;
+    }
+
+    .hero-btn.secondary{
+      background:rgba(255,255,255,0.14);
+      color:white;
+      border:1px solid rgba(255,255,255,0.22);
+    }
+
+    .hero-illustration{
+      position:relative;
+      z-index:2;
+      background:rgba(255,255,255,0.12);
+      border:1px solid rgba(255,255,255,0.18);
+      backdrop-filter:blur(8px);
+      border-radius:26px;
+      padding:18px;
+    }
+
+    .hero-illustration svg{
+      width:100%;
+      height:auto;
+      display:block;
+    }
+
+    .stats{
+      display:grid;
+      grid-template-columns:repeat(4,1fr);
+      gap:18px;
+      margin-bottom:26px;
+    }
+
+    .stat-card{
+      background:white;
+      border-radius:20px;
+      padding:22px;
+      box-shadow:0 12px 28px rgba(15,23,42,0.05);
+    }
+
+    .stat-card .label{
+      font-size:13px;
+      color:#64748b;
+      margin-bottom:10px;
+      font-weight:600;
+    }
+
+    .stat-card .value{
+      font-size:30px;
+      font-weight:800;
+      color:#2563eb;
+      margin-bottom:8px;
+    }
+
+    .stat-card .sub{
+      font-size:13px;
+      color:#64748b;
+      line-height:1.7;
+    }
+
+    .section{
+      margin-bottom:26px;
+    }
+
+    .section-title{
+      font-size:26px;
+      font-weight:800;
+      color:#0f172a;
+      margin-bottom:8px;
+    }
+
+    .section-subtitle{
+      font-size:14px;
+      color:#64748b;
+      line-height:1.7;
+      margin-bottom:20px;
+    }
+
+    .grid-2{
+      display:grid;
+      grid-template-columns:1.2fr 0.8fr;
+      gap:24px;
+    }
+
+    .lesson-list{
+      display:grid;
+      gap:16px;
+    }
+
+    .lesson-item{
+      background:#ffffff;
+      border:1px solid #e2e8f0;
+      border-radius:18px;
+      padding:18px;
+      transition:0.25s;
+      box-shadow:0 10px 24px rgba(15,23,42,0.04);
+    }
+
+    .lesson-item:hover{
+      border-color:#bfdbfe;
+      transform:translateY(-2px);
+    }
+
+    .lesson-top{
+      display:flex;
+      justify-content:space-between;
+      align-items:flex-start;
+      gap:12px;
+      margin-bottom:8px;
+    }
+
+    .lesson-item h3{
+      font-size:17px;
+      color:#0f172a;
+      margin:0 0 8px 0;
+    }
+
+    .lesson-item p{
+      font-size:14px;
+      line-height:1.8;
+      color:#64748b;
+      margin:0 0 12px 0;
+    }
+
+    .lesson-meta{
+      display:flex;
+      flex-wrap:wrap;
+      gap:10px;
+    }
+
+    .tag{
+      display:inline-flex;
+      align-items:center;
+      justify-content:center;
+      padding:6px 10px;
+      border-radius:999px;
+      font-size:12px;
+      font-weight:700;
+      white-space:nowrap;
+    }
+
+    .tag.blue{
+      background:#dbeafe;
+      color:#2563eb;
+    }
+
+    .tag.orange{
+      background:#ffedd5;
+      color:#ea580c;
+    }
+
+    .tag.green{
+      background:#dcfce7;
+      color:#16a34a;
+    }
+
+    .tag.purple{
+      background:#ede9fe;
+      color:#7c3aed;
+    }
+
+    .side-stack{
+      display:grid;
+      gap:20px;
+    }
+
+    .progress-box,
+    .tips-card{
+      background:white;
+      border-radius:22px;
+      padding:24px;
+      box-shadow:0 12px 28px rgba(15,23,42,0.05);
+    }
+
+    .progress-box h3,
+    .tips-card h3{
+      font-size:21px;
+      margin-bottom:16px;
+      color:#0f172a;
+    }
+
+    .progress-item{
+      margin-bottom:16px;
+    }
+
+    .progress-item strong{
+      display:block;
+      font-size:14px;
+      color:#334155;
+      margin-bottom:8px;
+    }
+
+    .track{
+      width:100%;
+      height:10px;
+      background:#e2e8f0;
+      border-radius:999px;
+      overflow:hidden;
+      margin-bottom:6px;
+    }
+
+    .fill{
+      height:100%;
+      border-radius:999px;
+      background:linear-gradient(90deg,#3b82f6,#6366f1);
+    }
+
+    .progress-item span{
+      font-size:13px;
+      color:#64748b;
+    }
+
+    .tip-list{
+      display:grid;
+      gap:12px;
+    }
+
+    .tip{
+      background:#f8fbff;
+      border:1px solid #e2e8f0;
+      border-radius:16px;
+      padding:14px 16px;
+      font-size:14px;
+      line-height:1.8;
+      color:#64748b;
+    }
+
+    .program-grid{
+      display:grid;
+      grid-template-columns:repeat(3,1fr);
+      gap:20px;
+    }
+
+    .program-card{
+      background:white;
+      border-radius:22px;
+      padding:22px;
+      box-shadow:0 12px 28px rgba(15,23,42,0.05);
+      transition:0.25s;
+    }
+
+    .program-card:hover{
+      transform:translateY(-4px);
+    }
+
+    .program-card h3{
+      font-size:19px;
+      margin-bottom:10px;
+      color:#0f172a;
+    }
+
+    .program-card p{
+      font-size:14px;
+      line-height:1.8;
+      color:#64748b;
+      margin-bottom:12px;
+    }
+
+    .cta{
+      background:linear-gradient(135deg,#0ea5e9,#3b82f6);
+      border-radius:26px;
+      padding:30px;
+      color:white;
+      text-align:center;
+      box-shadow:0 18px 40px rgba(14,165,233,0.18);
+    }
+
+    .cta h2{
+      font-size:30px;
+      margin-bottom:12px;
+    }
+
+    .cta p{
+      font-size:15px;
+      line-height:1.8;
+      max-width:760px;
+      margin:0 auto 18px auto;
+      opacity:0.96;
+    }
+
+    .cta button{
+      border:none;
+      background:white;
+      color:#2563eb;
+      padding:13px 20px;
+      border-radius:14px;
+      font-weight:800;
+      cursor:pointer;
+    }
+
+    .empty-box{
+      background:#fff;
+      border-radius:20px;
+      padding:24px;
+      border:1px dashed #cbd5e1;
+      color:#64748b;
+      line-height:1.8;
+      text-align:center;
+    }
+
+    .error-box{
+      background:#fff1f2;
+      color:#be123c;
+      border:1px solid #fecdd3;
+      border-radius:18px;
+      padding:16px 18px;
+      margin-bottom:18px;
+      line-height:1.7;
+      display:none;
+    }
+
+    .loading-box{
+      background:#eff6ff;
+      color:#1d4ed8;
+      border:1px solid #bfdbfe;
+      border-radius:18px;
+      padding:16px 18px;
+      margin-bottom:18px;
+      line-height:1.7;
+      display:none;
+    }
+
+    @media(max-width:1200px){
+      .stats,
+      .program-grid{
+        grid-template-columns:repeat(2,1fr);
+      }
+      .grid-2,
+      .hero{
+        grid-template-columns:1fr;
+      }
+    }
+
+    @media(max-width:768px){
+      body{
+        flex-direction:column;
+      }
+      .sidebar{
+        width:100%;
+      }
+      .main{
+        padding:20px;
+      }
+      .stats,
+      .program-grid{
+        grid-template-columns:1fr;
+      }
+      .hero{
+        padding:24px;
+      }
+      .hero h1{
+        font-size:30px;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="sidebar">
+    <div class="logo">English for Kids</div>
+    <ul class="menu" id="menu">
+      <div class="active-bar" id="activeBar"></div>
+      <a href="trangchuhocsinh.html"><li class="active">Trang chủ</li></a>
+      <a href="QLchuongtrinhhocsinh.html"><li>Chương trình học</li></a>
+      <a href="QLbaitaphocsinh.html"><li>Bài tập</li></a>
+      <a href="thongtin.html"><li>Thông tin cá nhân</li></a>
+    </ul>
+  </div>
+
+  <div class="main">
+    <div class="loading-box" id="loadingBox">Đang tải dữ liệu học sinh...</div>
+    <div class="error-box" id="errorBox"></div>
+
+    <div class="topbar">
+      <div class="student-greet">
+        <h2 id="studentWelcome">Xin chào học sinh!</h2>
+        <p id="studentInfo">Hôm nay là một ngày tuyệt vời để tiếp tục học tiếng Anh.</p>
+      </div>
+
+      <div class="avatar-box" onclick="toggleMenu(event)">
+        <div class="avatar" id="studentAvatar">HS</div>
+        <div class="dropdown" id="dropdownMenu">
+          <label for="gradeSelect">Chọn khối</label>
+          <select id="gradeSelect" onchange="changeGrade(this.value)">
+            <option value="">-- Chọn khối --</option>
+            <option value="Lớp 1">Lớp 1</option>
+            <option value="Lớp 2">Lớp 2</option>
+            <option value="Lớp 3">Lớp 3</option>
+            <option value="Lớp 4">Lớp 4</option>
+            <option value="Lớp 5">Lớp 5</option>
+          </select>
+          <button class="logout-btn" onclick="confirmLogout()">Đăng xuất</button>
+        </div>
+      </div>
+    </div>
+
+    <section class="hero">
+      <div class="hero-content">
+        <div class="hero-badge-top">Khoá học tiếng Anh vui nhộn cho học sinh tiểu học</div>
+        <h1 id="heroTitle">Học tiếng Anh thật vui với hình ảnh đáng yêu và bài học sinh động</h1>
+        <p id="heroText">
+          English for Kids giúp các em học từ vựng, phát âm, nghe và nói qua hình ảnh,
+          câu chuyện ngắn và bài tập tương tác.
+        </p>
+        <div class="hero-actions">
+          <button class="hero-btn primary" onclick="window.location.href='QLchuongtrinhhocsinh.html'">Bắt đầu học ngay</button>
+          <button class="hero-btn secondary" onclick="window.location.href='QLbaitaphocsinh.html'">Làm bài tập</button>
+        </div>
+      </div>
+
+      <div class="hero-illustration">
+        <svg viewBox="0 0 420 300" xmlns="http://www.w3.org/2000/svg">
+          <rect width="420" height="300" rx="26" fill="#EEF4FF"/>
+          <circle cx="78" cy="72" r="28" fill="#FCD34D"/>
+          <circle cx="336" cy="68" r="18" fill="#93C5FD"/>
+          <circle cx="365" cy="102" r="10" fill="#F9A8D4"/>
+          <rect x="65" y="165" width="290" height="85" rx="18" fill="#BFDBFE"/>
+          <rect x="108" y="112" width="190" height="95" rx="18" fill="#FFFFFF" stroke="#3B82F6" stroke-width="4"/>
+          <rect x="135" y="136" width="136" height="48" rx="10" fill="#DBEAFE"/>
+          <text x="154" y="168" font-size="28" font-weight="800" fill="#2563EB">A B C</text>
+          <rect x="118" y="207" width="28" height="46" rx="8" fill="#F59E0B"/>
+          <rect x="274" y="207" width="28" height="46" rx="8" fill="#EF4444"/>
+          <rect x="164" y="215" width="92" height="16" rx="8" fill="#FFFFFF"/>
+          <circle cx="74" cy="208" r="22" fill="#FCA5A5"/>
+          <circle cx="346" cy="208" r="22" fill="#86EFAC"/>
+        </svg>
+      </div>
+    </section>
+
+    <section class="stats">
+      <div class="stat-card">
+        <div class="label">Khối hiện tại</div>
+        <div class="value" id="statGrade">Lớp 1</div>
+        <div class="sub">Khối đang được chọn để hiển thị chương trình và bài tập.</div>
+      </div>
+
+      <div class="stat-card">
+        <div class="label">Chương trình</div>
+        <div class="value" id="statPrograms">0</div>
+        <div class="sub">Số chương trình đang có cho khối hiện tại.</div>
+      </div>
+
+      <div class="stat-card">
+        <div class="label">Bài tập</div>
+        <div class="value" id="statExercises">0</div>
+        <div class="sub">Số bài tập hiện có để học sinh luyện tập.</div>
+      </div>
+
+      <div class="stat-card">
+        <div class="label">Học sinh</div>
+        <div class="value" id="statStudentCode">---</div>
+        <div class="sub">Mã học sinh đang đăng nhập trong hệ thống.</div>
+      </div>
+    </section>
+
+    <section class="section">
+      <h2 class="section-title">Bài tập và nội dung gợi ý</h2>
+      <p class="section-subtitle">
+        Nội dung dưới đây được lấy theo đúng khối lớp của học sinh đang đăng nhập.
+      </p>
+
+      <div class="grid-2">
+        <div class="lesson-list" id="lessonList"></div>
+
+        <div class="side-stack">
+          <div class="progress-box">
+            <h3>Kỹ năng được rèn luyện</h3>
+
+            <div class="progress-item">
+              <strong>Từ vựng</strong>
+              <div class="track"><div class="fill" style="width:88%;"></div></div>
+              <span>Học từ mới theo chủ đề quen thuộc mỗi ngày</span>
+            </div>
+
+            <div class="progress-item">
+              <strong>Phát âm</strong>
+              <div class="track"><div class="fill" style="width:76%;"></div></div>
+              <span>Luyện nghe âm và đọc to từ đơn giản</span>
+            </div>
+
+            <div class="progress-item">
+              <strong>Giao tiếp cơ bản</strong>
+              <div class="track"><div class="fill" style="width:72%;"></div></div>
+              <span>Tập nói các câu ngắn về bản thân và xung quanh</span>
+            </div>
+
+            <div class="progress-item">
+              <strong>Bài tập thực hành</strong>
+              <div class="track"><div class="fill" style="width:84%;"></div></div>
+              <span>Ôn bài bằng trò chơi, nối từ, điền từ và trắc nghiệm</span>
+            </div>
+          </div>
+
+          <div class="tips-card">
+            <h3>Mẹo học tốt</h3>
+            <div class="tip-list">
+              <div class="tip">Mỗi ngày học 5 từ mới và đọc to ít nhất 3 lần để nhớ lâu hơn.</div>
+              <div class="tip">Học qua hình ảnh sẽ giúp các em liên tưởng tốt và tiếp thu nhanh hơn.</div>
+              <div class="tip">Sau khi học xong bài mới, nên làm ngay bài tập để ôn lại kiến thức.</div>
+              <div class="tip">Nếu quên từ, hãy xem lại tranh minh họa và đọc lại ví dụ ngắn.</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="section">
+      <h2 class="section-title">Chương trình học theo khối</h2>
+      <p class="section-subtitle">
+        Danh sách chương trình học đang có dành cho khối hiện tại.
+      </p>
+
+      <div class="program-grid" id="programGrid"></div>
+    </section>
+
+    <section class="section">
+      <div class="cta">
+        <h2>Sẵn sàng khám phá tiếng Anh chưa?</h2>
+        <p>
+          Hãy chọn đúng khối lớp của mình, bắt đầu với những bài học đầu tiên và luyện tập mỗi ngày để tiến bộ thật nhanh.
+        </p>
+        <button onclick="window.location.href='QLchuongtrinhhocsinh.html'">Khám phá chương trình học</button>
+      </div>
+    </section>
+  </div>
+
+  <script>
+    let selectedGrade = "";
+    let studentData = null;
+    let programs = [];
+    let exercises = [];
+
+    function normalizeGrade(grade){
+      if(!grade) return "Lớp 1";
+      const g = String(grade).trim().toLowerCase();
+      if(g === "1" || g === "lớp 1" || g === "lop 1") return "Lớp 1";
+      if(g === "2" || g === "lớp 2" || g === "lop 2") return "Lớp 2";
+      if(g === "3" || g === "lớp 3" || g === "lop 3") return "Lớp 3";
+      if(g === "4" || g === "lớp 4" || g === "lop 4") return "Lớp 4";
+      if(g === "5" || g === "lớp 5" || g === "lop 5") return "Lớp 5";
+      return String(grade).trim();
+    }
+
+    function showLoading(message = "Đang tải dữ liệu học sinh..."){
+      const box = document.getElementById("loadingBox");
+      box.style.display = "block";
+      box.innerText = message;
+    }
+
+    function hideLoading(){
+      document.getElementById("loadingBox").style.display = "none";
+    }
+
+    function showError(message){
+      const box = document.getElementById("errorBox");
+      box.style.display = "block";
+      box.innerHTML = message;
+    }
+
+    function hideError(){
+      document.getElementById("errorBox").style.display = "none";
+      document.getElementById("errorBox").innerHTML = "";
+    }
+
+    function safeText(value, fallback = ""){
+      if(value === null || value === undefined || value === "") return fallback;
+      return String(value);
+    }
+
+    function getStudentName(student){
+      return safeText(
+        student?.name ||
+        student?.full_name ||
+        student?.fullname ||
+        student?.student_name,
+        "học sinh"
+      );
+    }
+
+    function getStudentCode(student){
+      return safeText(
+        student?.studentCode ||
+        student?.student_code ||
+        student?.code ||
+        student?.ma_hoc_sinh,
+        "---"
+      );
+    }
+
+    function getExerciseDesc(item){
+      return safeText(
+        item?.description ||
+        item?.desc ||
+        item?.mo_ta,
+        "Bài tập luyện tập cho học sinh theo đúng nội dung của khối."
+      );
+    }
+
+    function getProgramDesc(item){
+      return safeText(
+        item?.description ||
+        item?.desc ||
+        item?.mo_ta,
+        "Chương trình học phù hợp với học sinh theo từng khối lớp."
+      );
+    }
+
+    function getCreatedAt(item){
+      return safeText(
+        item?.createdAt ||
+        item?.created_at ||
+        item?.ngay_tao,
+        "Mới cập nhật"
+      );
+    }
+
+    function getTotalQuestions(item){
+      return safeText(
+        item?.totalQuestions ||
+        item?.total_questions ||
+        item?.so_cau_hoi,
+        0
+      );
+    }
+
+    function toggleMenu(event){
+      if(event) event.stopPropagation();
+      const dropdown = document.getElementById("dropdownMenu");
+      dropdown.classList.toggle("show");
+    }
+
+    async function confirmLogout(){
+      try{
+        await fetch("api/logout.php");
+      }catch(e){}
+      localStorage.removeItem("role");
+      localStorage.removeItem("user_name");
+      localStorage.removeItem("logged_in");
+      localStorage.removeItem("selectedStudentGrade");
+      window.location.href = "dangnhap.html";
+    }
+
+    async function changeGrade(grade){
+      if(!grade) return;
+      selectedGrade = normalizeGrade(grade);
+      localStorage.setItem("selectedStudentGrade", selectedGrade);
+      await loadStudentHome();
+    }
+
+    async function fetchJson(url){
+      const res = await fetch(url, { cache: "no-store" });
+      const raw = await res.text();
+
+      let data = null;
+      try{
+        data = JSON.parse(raw);
+      }catch(e){
+        throw new Error("API không trả JSON hợp lệ từ: " + url + "<br><br>Nội dung nhận được:<br>" + raw);
+      }
+
+      if(!res.ok){
+        throw new Error(data.message || ("HTTP Error " + res.status));
+      }
+
+      return data;
+    }
+
+    async function loadStudentHome(){
+      showLoading();
+      hideError();
+
+      try{
+        selectedGrade = normalizeGrade(localStorage.getItem("selectedStudentGrade") || "Lớp 1");
+
+        const url = selectedGrade
+          ? `api/get_student_home.php?grade=${encodeURIComponent(selectedGrade)}`
+          : "api/get_student_home.php";
+
+        const data = await fetchJson(url);
+
+        if (!data.success) {
+          throw new Error(data.message || "Không tải được dữ liệu học sinh");
+        }
+
+        studentData = data.student || {};
+        programs = Array.isArray(data.programs) ? data.programs : [];
+        exercises = Array.isArray(data.exercises) ? data.exercises : [];
+        selectedGrade = normalizeGrade(
+          data.selectedGrade ||
+          studentData.grade ||
+          studentData.lop ||
+          selectedGrade ||
+          "Lớp 1"
+        );
+
+        localStorage.setItem("selectedStudentGrade", selectedGrade);
+
+        renderStudentInfo();
+        renderStats();
+        renderLessons();
+        renderPrograms();
+      } catch (error) {
+        console.error(error);
+        showError("Lỗi tải dữ liệu học sinh.<br>" + error.message);
+      } finally {
+        hideLoading();
+      }
+    }
+
+    function renderStudentInfo(){
+      const select = document.getElementById("gradeSelect");
+      select.value = normalizeGrade(selectedGrade);
+
+      const studentName = getStudentName(studentData);
+      const studentCode = getStudentCode(studentData);
+
+      document.getElementById("studentWelcome").innerText = `Xin chào ${studentName}!`;
+      document.getElementById("studentInfo").innerText = `Mã học sinh: ${studentCode}. Chúc em học thật tốt với nội dung dành cho ${selectedGrade}.`;
+      document.getElementById("studentAvatar").innerText = studentName.trim().substring(0,2).toUpperCase();
+      document.getElementById("heroTitle").innerText = `Chào mừng em đến với chương trình tiếng Anh ${selectedGrade}`;
+      document.getElementById("heroText").innerText = `English for Kids giúp em học từ vựng, phát âm, nghe và nói thông qua bài học và bài tập được sắp theo đúng ${selectedGrade}.`;
+    }
+
+    function renderStats(){
+      document.getElementById("statGrade").innerText = selectedGrade;
+      document.getElementById("statPrograms").innerText = programs.length;
+      document.getElementById("statExercises").innerText = exercises.length;
+      document.getElementById("statStudentCode").innerText = getStudentCode(studentData);
+    }
+
+    function renderLessons(){
+      const lessonList = document.getElementById("lessonList");
+
+      if(!exercises.length){
+        lessonList.innerHTML = `
+          <div class="empty-box">
+            Chưa có bài tập nào cho ${selectedGrade}.<br>
+            Hãy quay lại sau khi giáo viên hoặc quản trị viên thêm dữ liệu.
+          </div>
+        `;
+        return;
+      }
+
+      lessonList.innerHTML = exercises.map((item, index) => `
+        <div class="lesson-item">
+          <div class="lesson-top">
+            <div>
+              <h3>${safeText(item.name, "Bài tập chưa đặt tên")}</h3>
+            </div>
+            <span class="tag ${index % 4 === 0 ? "blue" : index % 4 === 1 ? "green" : index % 4 === 2 ? "orange" : "purple"}">${normalizeGrade(item.grade || selectedGrade)}</span>
+          </div>
+          <p>${getExerciseDesc(item)}</p>
+          <div class="lesson-meta">
+            <span class="tag blue">${safeText(item.subject, "Tiếng Anh")}</span>
+            <span class="tag orange">${getTotalQuestions(item)} câu hỏi</span>
+            <span class="tag green">${getCreatedAt(item)}</span>
+          </div>
+        </div>
+      `).join("");
+    }
+
+    function getProgramBadge(status){
+      const s = safeText(status, "").toLowerCase();
+      if(s.includes("duyệt") || s.includes("hoạt động")) return "green";
+      if(s.includes("đang") || s.includes("triển khai")) return "blue";
+      return "orange";
+    }
+
+    function renderPrograms(){
+      const programGrid = document.getElementById("programGrid");
+
+      if(!programs.length){
+        programGrid.innerHTML = `
+          <div class="empty-box" style="grid-column:1/-1;">
+            Chưa có chương trình học nào cho ${selectedGrade}.<br>
+            Hãy quay lại sau khi hệ thống được cập nhật thêm dữ liệu.
+          </div>
+        `;
+        return;
+      }
+
+      programGrid.innerHTML = programs.map(item => `
+        <div class="program-card">
+          <h3>${safeText(item.name, "Chương trình chưa đặt tên")}</h3>
+          <p>${getProgramDesc(item)}</p>
+          <div class="lesson-meta">
+            <span class="tag blue">${safeText(item.subject, "Tiếng Anh")}</span>
+            <span class="tag purple">${normalizeGrade(item.grade || selectedGrade)}</span>
+            <span class="tag ${getProgramBadge(item.status)}">${safeText(item.status, "Đã duyệt")}</span>
+          </div>
+        </div>
+      `).join("");
+    }
+
+    const menuItems = document.querySelectorAll(".menu li");
+    const activeBar = document.getElementById("activeBar");
+
+    function moveBar(element){
+      if(!element) return;
+      activeBar.style.top = element.offsetTop + "px";
+      activeBar.style.height = element.offsetHeight + "px";
+    }
+
+    menuItems.forEach(item=>{
+      item.addEventListener("click", function(){
+        menuItems.forEach(i=>i.classList.remove("active"));
+        this.classList.add("active");
+        moveBar(this);
+      });
+    });
+
+    window.onload = async function(){
+      const currentPage = window.location.pathname.split("/").pop();
+      let activeFound = false;
+
+      document.querySelectorAll(".menu a").forEach(link=>{
+        const href = link.getAttribute("href");
+        if(href === currentPage){
+          const li = link.querySelector("li");
+          li.classList.add("active");
+          moveBar(li);
+          activeFound = true;
+        }
+      });
+
+      if(!activeFound){
+        moveBar(document.querySelector(".menu li.active"));
+      }
+
+      await loadStudentHome();
+    };
+
+    window.addEventListener("click", function(e){
+      const avatarBox = document.querySelector(".avatar-box");
+      const dropdown = document.getElementById("dropdownMenu");
+      if(avatarBox && !avatarBox.contains(e.target)){
+        dropdown.classList.remove("show");
+      }
+    });
+  </script>
+</body>
+</html>

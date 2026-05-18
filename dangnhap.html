@@ -1,0 +1,443 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Đăng nhập | English for Kids</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+
+  <style>
+    *{
+      margin:0;
+      padding:0;
+      box-sizing:border-box;
+      font-family:'Poppins',sans-serif;
+    }
+
+    body{
+      min-height:100vh;
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      padding:20px;
+      background:linear-gradient(135deg,#eaf1ff,#dbe7ff);
+    }
+
+    .login-wrapper{
+      width:980px;
+      max-width:100%;
+      min-height:580px;
+      background:#fff;
+      border-radius:28px;
+      overflow:hidden;
+      display:grid;
+      grid-template-columns:1fr 1fr;
+      box-shadow:0 20px 50px rgba(31,65,122,0.16);
+    }
+
+    .login-left{
+      padding:52px 42px;
+      display:flex;
+      flex-direction:column;
+      justify-content:center;
+      background:#fff;
+    }
+
+    .top-badge{
+      display:inline-flex;
+      align-items:center;
+      gap:8px;
+      width:max-content;
+      padding:8px 14px;
+      border-radius:999px;
+      background:#eef4ff;
+      color:#2b5aa6;
+      font-size:12px;
+      font-weight:700;
+      margin-bottom:18px;
+    }
+
+    .logo{
+      font-size:34px;
+      font-weight:800;
+      color:#1f417a;
+      margin-bottom:8px;
+      line-height:1.2;
+    }
+
+    .sub-logo{
+      font-size:14px;
+      color:#6b7c93;
+      margin-bottom:30px;
+      line-height:1.8;
+      max-width:420px;
+    }
+
+    .input-group{
+      margin-bottom:18px;
+    }
+
+    .input-group label{
+      font-size:14px;
+      font-weight:600;
+      color:#4b5563;
+      display:block;
+      margin-bottom:8px;
+    }
+
+    .input-wrap{
+      position:relative;
+    }
+
+    .input-wrap span{
+      position:absolute;
+      left:14px;
+      top:50%;
+      transform:translateY(-50%);
+      font-size:16px;
+      color:#94a3b8;
+    }
+
+    .input-group input{
+      width:100%;
+      height:52px;
+      padding:0 16px 0 44px;
+      border-radius:14px;
+      border:1px solid #dbe2ea;
+      font-size:14px;
+      transition:0.3s;
+      background:white;
+      outline:none;
+    }
+
+    .input-group input:focus{
+      border-color:#2b5aa6;
+      box-shadow:0 0 0 4px rgba(43,90,166,0.08);
+    }
+
+    .options{
+      display:flex;
+      justify-content:space-between;
+      align-items:center;
+      margin-bottom:22px;
+      font-size:13px;
+      gap:10px;
+      flex-wrap:wrap;
+      color:#64748b;
+    }
+
+    .options a{
+      text-decoration:none;
+      color:#2b5aa6;
+      font-weight:600;
+    }
+
+    .options a:hover{
+      text-decoration:underline;
+    }
+
+    .btn-login{
+      width:100%;
+      height:54px;
+      background:linear-gradient(135deg,#2b5aa6,#4f8ef7);
+      color:white;
+      border:none;
+      border-radius:14px;
+      font-size:15px;
+      cursor:pointer;
+      transition:0.3s;
+      font-weight:700;
+      box-shadow:0 14px 28px rgba(43,90,166,0.22);
+    }
+
+    .btn-login:hover{
+      transform:translateY(-1px);
+      box-shadow:0 18px 34px rgba(43,90,166,0.28);
+    }
+
+    .error-message,
+    .success-message{
+      margin-top:14px;
+      font-size:14px;
+      font-weight:600;
+      display:none;
+    }
+
+    .error-message{color:#dc2626}
+    .success-message{color:#16a34a}
+
+    .copyright{
+      font-size:12px;
+      color:#94a3b8;
+      margin-top:28px;
+      line-height:1.7;
+    }
+
+    .login-right{
+      position:relative;
+      overflow:hidden;
+      background:linear-gradient(135deg,#1f417a 0%, #2b5aa6 48%, #4f8ef7 100%);
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      padding:34px;
+    }
+
+    .login-right::before,
+    .login-right::after{
+      content:"";
+      position:absolute;
+      border-radius:50%;
+      background:rgba(255,255,255,0.08);
+    }
+
+    .login-right::before{
+      width:220px;
+      height:220px;
+      top:-50px;
+      right:-50px;
+    }
+
+    .login-right::after{
+      width:170px;
+      height:170px;
+      bottom:-40px;
+      left:-40px;
+    }
+
+    .right-overlay{
+      position:relative;
+      z-index:1;
+      width:100%;
+      max-width:390px;
+      min-height:500px;
+      border-radius:26px;
+      background:rgba(255,255,255,0.10);
+      border:1px solid rgba(255,255,255,0.16);
+      backdrop-filter:blur(10px);
+      padding:28px;
+      display:flex;
+      flex-direction:column;
+      justify-content:center;
+      align-items:center;
+      text-align:center;
+      color:white;
+    }
+
+    .logo-image-wrap{
+      width:160px;
+      height:160px;
+      border-radius:26px;
+      background:rgba(255,255,255,0.12);
+      border:1px solid rgba(255,255,255,0.18);
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      padding:18px;
+      margin-bottom:22px;
+    }
+
+    .logo-image{
+      max-width:100%;
+      max-height:100%;
+      object-fit:contain;
+      display:block;
+    }
+
+    .right-content h2{
+      font-size:30px;
+      margin-bottom:12px;
+      line-height:1.25;
+      font-weight:800;
+    }
+
+    .right-content p{
+      font-size:14px;
+      line-height:1.9;
+      color:rgba(255,255,255,0.92);
+      max-width:300px;
+    }
+
+    @media(max-width: 900px){
+      .login-wrapper{
+        grid-template-columns:1fr;
+      }
+
+      .login-left{
+        order:2;
+        padding:30px 22px;
+      }
+
+      .login-right{
+        order:1;
+        min-height:300px;
+        padding:22px;
+      }
+
+      .right-overlay{
+        min-height:auto;
+        padding:24px;
+      }
+
+      .logo-image-wrap{
+        width:120px;
+        height:120px;
+        margin-bottom:18px;
+      }
+
+      .right-content h2{
+        font-size:26px;
+      }
+    }
+  </style>
+</head>
+
+<body>
+
+  <div class="login-wrapper">
+    <div class="login-left">
+      <div class="top-badge">🔐 Đăng nhập hệ thống</div>
+
+      <div class="logo">English for Kids</div>
+      <div class="sub-logo">
+        Đăng nhập để tiếp tục sử dụng hệ thống học tập trực tuyến.
+      </div>
+
+      <div class="input-group">
+        <label>Tài khoản</label>
+        <div class="input-wrap">
+          <span>👤</span>
+          <input type="text" id="account" placeholder="Nhập tài khoản..." required>
+        </div>
+      </div>
+
+      <div class="input-group">
+        <label>Mật khẩu</label>
+        <div class="input-wrap">
+          <span>🔒</span>
+          <input type="password" id="password" placeholder="Nhập mật khẩu..." required>
+        </div>
+      </div>
+
+      <div class="options">
+        <label><input type="checkbox" id="rememberMe"> Hãy nhớ đến tôi</label>
+        <a href="#">Quên mật khẩu?</a>
+      </div>
+
+      <button class="btn-login" onclick="dangNhap()">Đăng nhập</button>
+
+      <div id="error" class="error-message">❌ Sai tài khoản hoặc mật khẩu!</div>
+      <div id="success" class="success-message">✅ Đăng nhập thành công! Đang chuyển hướng...</div>
+
+      <div class="copyright">
+        © 2026 Bản quyền thuộc về Nhóm 1 • Phiên bản 5.0
+      </div>
+    </div>
+
+    <div class="login-right">
+      <div class="right-overlay">
+        <div class="logo-image-wrap">
+          <img src="images/logo-school.png" alt="English School Logo" class="logo-image">
+        </div>
+
+        <div class="right-content">
+          <h2>Welcome back</h2>
+          <p>
+            Một không gian học tập hiện đại, trực quan và thân thiện dành cho học sinh, giáo viên và quản trị viên.
+          </p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+<script>
+async function dangNhap() {
+  const account = document.getElementById("account").value.trim();
+  const password = document.getElementById("password").value.trim();
+  const error = document.getElementById("error");
+  const success = document.getElementById("success");
+
+  error.style.display = "none";
+  success.style.display = "none";
+
+  if (!account || !password) {
+    error.innerText = "❌ Vui lòng nhập đầy đủ tài khoản và mật khẩu!";
+    error.style.display = "block";
+    return;
+  }
+
+  // ADMIN MẶC ĐỊNH
+  if (account === "admin@gmail.com" && password === "123456") {
+    localStorage.setItem("role", "admin");
+    localStorage.setItem("user_name", "Admin");
+    localStorage.setItem("logged_in", "1");
+    localStorage.setItem("admin_email", "admin@gmail.com");
+
+    success.innerText = "✅ Đăng nhập admin thành công! Đang chuyển hướng...";
+    success.style.display = "block";
+    error.style.display = "none";
+
+    setTimeout(() => {
+      window.location.href = "trangchu.html";
+    }, 900);
+    return;
+  }
+
+  // CÁC TÀI KHOẢN KHÁC GIỮ NGUYÊN
+  try {
+    const formData = new FormData();
+    formData.append("account", account);
+    formData.append("password", password);
+
+    const res = await fetch("api/login.php", {
+      method: "POST",
+      body: formData
+    });
+
+    const text = await res.text();
+    let data;
+
+    try {
+      data = JSON.parse(text);
+    } catch (e) {
+      console.error(text);
+      error.innerText = "❌ API đăng nhập đang lỗi!";
+      error.style.display = "block";
+      return;
+    }
+
+    if (data.success) {
+      localStorage.setItem("role", data.role || "");
+      localStorage.setItem("user_name", data.name || "");
+      localStorage.setItem("logged_in", "1");
+
+      success.style.display = "block";
+      error.style.display = "none";
+
+      setTimeout(() => {
+        window.location.href = data.redirect || "trangchu.html";
+      }, 900);
+    } else {
+      error.innerText = "❌ " + (data.message || "Sai tài khoản hoặc mật khẩu!");
+      error.style.display = "block";
+      success.style.display = "none";
+    }
+
+  } catch (err) {
+    console.error(err);
+    error.innerText = "❌ Lỗi server!";
+    error.style.display = "block";
+  }
+}
+
+document.getElementById("password").addEventListener("keypress", function(e){
+  if(e.key === "Enter"){
+    dangNhap();
+  }
+});
+</script>
+
+</body>
+</html>

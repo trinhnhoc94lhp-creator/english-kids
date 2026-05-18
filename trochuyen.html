@@ -1,0 +1,519 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Trò chuyện với quản trị viên</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <style>
+    *{
+      margin:0;
+      padding:0;
+      box-sizing:border-box;
+      font-family:'Inter',sans-serif;
+    }
+
+    body{
+      min-height:100vh;
+      background:linear-gradient(180deg,#fef7ff 0%,#eef6ff 50%,#ecfeff 100%);
+      color:#0f172a;
+      padding:24px;
+    }
+
+    .page{
+      max-width:1100px;
+      margin:0 auto;
+    }
+
+    .topbar{
+      display:flex;
+      justify-content:space-between;
+      align-items:center;
+      gap:12px;
+      margin-bottom:22px;
+      flex-wrap:wrap;
+      background:rgba(255,255,255,.82);
+      border:1px solid #e0f2fe;
+      border-radius:22px;
+      padding:16px 18px;
+      box-shadow:0 14px 30px rgba(59,130,246,.08);
+    }
+
+    .logo{
+      font-size:24px;
+      font-weight:800;
+      color:#2563eb;
+    }
+
+    .back-btn{
+      border:none;
+      border-radius:14px;
+      padding:12px 18px;
+      font-size:14px;
+      font-weight:800;
+      cursor:pointer;
+      background:white;
+      color:#2563eb;
+      border:1px solid #bfdbfe;
+      box-shadow:0 10px 20px rgba(59,130,246,.06);
+    }
+
+    .back-btn:hover{
+      background:#eff6ff;
+    }
+
+    .hero{
+      background:linear-gradient(135deg,#2563eb 0%,#7c3aed 50%,#06b6d4 100%);
+      color:white;
+      border-radius:30px;
+      padding:30px;
+      margin-bottom:20px;
+      box-shadow:0 22px 46px rgba(79,70,229,.22);
+    }
+
+    .hero-badge{
+      display:inline-block;
+      padding:8px 14px;
+      border-radius:999px;
+      background:rgba(255,255,255,.16);
+      border:1px solid rgba(255,255,255,.22);
+      font-size:13px;
+      font-weight:800;
+      margin-bottom:14px;
+    }
+
+    .hero h1{
+      font-size:34px;
+      margin-bottom:10px;
+      line-height:1.2;
+    }
+
+    .hero p{
+      font-size:15px;
+      line-height:1.8;
+      max-width:760px;
+      opacity:.98;
+    }
+
+    .chat-card{
+      background:white;
+      border-radius:28px;
+      border:1px solid #e0f2fe;
+      box-shadow:0 16px 32px rgba(59,130,246,.08);
+      overflow:hidden;
+    }
+
+    .chat-header{
+      padding:20px 22px;
+      border-bottom:1px solid #e0f2fe;
+      background:linear-gradient(135deg,#f8fbff,#fdf4ff);
+      display:flex;
+      justify-content:space-between;
+      align-items:center;
+      gap:12px;
+      flex-wrap:wrap;
+    }
+
+    .admin-box{
+      display:flex;
+      align-items:center;
+      gap:12px;
+    }
+
+    .admin-avatar{
+      width:54px;
+      height:54px;
+      border-radius:18px;
+      background:linear-gradient(135deg,#60a5fa,#818cf8);
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      color:white;
+      font-size:22px;
+      font-weight:900;
+      box-shadow:0 14px 28px rgba(96,165,250,.2);
+      flex-shrink:0;
+    }
+
+    .admin-box h3{
+      font-size:20px;
+      color:#0f172a;
+      margin-bottom:4px;
+    }
+
+    .admin-box p{
+      font-size:14px;
+      color:#64748b;
+      line-height:1.7;
+    }
+
+    .status-pill{
+      display:inline-flex;
+      align-items:center;
+      gap:8px;
+      padding:10px 14px;
+      border-radius:999px;
+      background:#dcfce7;
+      color:#166534;
+      font-size:13px;
+      font-weight:800;
+    }
+
+    .dot{
+      width:10px;
+      height:10px;
+      border-radius:50%;
+      background:#22c55e;
+    }
+
+    .chat-body{
+      padding:22px;
+      background:linear-gradient(180deg,#fcfdff 0%,#f8fbff 100%);
+      min-height:430px;
+      display:flex;
+      flex-direction:column;
+      gap:14px;
+      overflow:auto;
+    }
+
+    .day-tag{
+      align-self:center;
+      padding:8px 14px;
+      border-radius:999px;
+      background:#eef4ff;
+      color:#2563eb;
+      font-size:12px;
+      font-weight:800;
+    }
+
+    .message-row{
+      display:flex;
+      gap:10px;
+      align-items:flex-end;
+      max-width:80%;
+    }
+
+    .message-row.user{
+      margin-left:auto;
+      flex-direction:row-reverse;
+    }
+
+    .bubble-avatar{
+      width:40px;
+      height:40px;
+      border-radius:14px;
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      color:white;
+      font-weight:800;
+      flex-shrink:0;
+    }
+
+    .bubble-avatar.admin{
+      background:linear-gradient(135deg,#60a5fa,#818cf8);
+    }
+
+    .bubble-avatar.user{
+      background:linear-gradient(135deg,#22c55e,#06b6d4);
+    }
+
+    .bubble-wrap{
+      display:grid;
+      gap:6px;
+    }
+
+    .bubble-name{
+      font-size:12px;
+      color:#64748b;
+      font-weight:800;
+    }
+
+    .message-row.user .bubble-name,
+    .message-row.user .bubble-time{
+      text-align:right;
+    }
+
+    .bubble{
+      padding:14px 16px;
+      border-radius:20px;
+      font-size:14px;
+      line-height:1.8;
+      white-space:pre-wrap;
+      word-break:break-word;
+      box-shadow:0 10px 20px rgba(15,23,42,.06);
+    }
+
+    .bubble.admin{
+      background:white;
+      border:1px solid #e0f2fe;
+      color:#334155;
+      border-top-left-radius:8px;
+    }
+
+    .bubble.user{
+      background:linear-gradient(135deg,#60a5fa,#818cf8);
+      color:white;
+      border-top-right-radius:8px;
+    }
+
+    .bubble-time{
+      font-size:11px;
+      color:#94a3b8;
+      font-weight:700;
+    }
+
+    .chat-footer{
+      padding:18px 20px 20px;
+      border-top:1px solid #e0f2fe;
+      background:white;
+    }
+
+    .composer{
+      display:grid;
+      grid-template-columns:1fr auto;
+      gap:12px;
+      align-items:end;
+    }
+
+    .composer textarea{
+      width:100%;
+      min-height:74px;
+      resize:vertical;
+      border:1px solid #dbeafe;
+      border-radius:16px;
+      padding:14px;
+      font-size:14px;
+      outline:none;
+      background:#f8fbff;
+      color:#0f172a;
+    }
+
+    .composer textarea:focus{
+      border-color:#93c5fd;
+      box-shadow:0 0 0 3px rgba(59,130,246,.08);
+    }
+
+    .send-btn{
+      border:none;
+      border-radius:16px;
+      padding:14px 20px;
+      font-size:14px;
+      font-weight:800;
+      cursor:pointer;
+      background:linear-gradient(135deg,#60a5fa,#818cf8);
+      color:white;
+      box-shadow:0 14px 28px rgba(96,165,250,.25);
+    }
+
+    .send-btn:hover{
+      transform:translateY(-2px);
+    }
+
+    @media(max-width:768px){
+      body{
+        padding:16px;
+      }
+
+      .hero h1{
+        font-size:28px;
+      }
+
+      .composer{
+        grid-template-columns:1fr;
+      }
+
+      .message-row{
+        max-width:100%;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="page">
+    <div class="topbar">
+      <div class="logo">English for Kids</div>
+      <button class="back-btn" onclick="goBack()">← Quay lại</button>
+    </div>
+
+    <section class="hero">
+      <div class="hero-badge">💬 Trò chuyện với quản trị viên</div>
+      <h1>Gửi tin nhắn để được hỗ trợ đăng ký khóa học</h1>
+      <p>
+        Đây là trang trò chuyện đơn giản để người dùng nhắn tin trực tiếp với quản trị viên.
+        Nếu cần đăng ký khóa học, bạn chỉ cần để lại lời nhắn tại đây.
+      </p>
+    </section>
+
+    <section class="chat-card">
+      <div class="chat-header">
+        <div class="admin-box">
+          <div class="admin-avatar">QT</div>
+          <div>
+            <h3>Quản trị viên</h3>
+            <p>Sẵn sàng hỗ trợ và tư vấn đăng ký khóa học cho bạn.</p>
+          </div>
+        </div>
+
+        <div class="status-pill">
+          <span class="dot"></span>
+          Đang hoạt động
+        </div>
+      </div>
+
+      <div class="chat-body" id="chatBody"></div>
+
+      <div class="chat-footer">
+        <div class="composer">
+          <textarea id="messageInput" placeholder="Nhập tin nhắn gửi quản trị viên..."></textarea>
+          <button class="send-btn" type="button" onclick="sendMessage()">Gửi tin nhắn</button>
+        </div>
+      </div>
+    </section>
+  </div>
+
+  <script>
+    const CHAT_STORAGE_KEY = 'simpleAdminChatMessages';
+    let isSending = false;
+    let lastSentText = '';
+    let lastSentAt = 0;
+
+    function goBack(){
+      window.location.href = 'trangchudangky.html';
+    }
+
+    function getNowTime(){
+      return new Date().toLocaleTimeString('vi-VN', { hour: '2-digit', minute: '2-digit' });
+    }
+
+    function getTodayLabel(){
+      return new Date().toLocaleDateString('vi-VN', { day: '2-digit', month: '2-digit', year: 'numeric' });
+    }
+
+    function getMessages(){
+      try{
+        const raw = localStorage.getItem(CHAT_STORAGE_KEY);
+        const parsed = raw ? JSON.parse(raw) : [];
+        return Array.isArray(parsed) ? parsed : [];
+      }catch(err){
+        return [];
+      }
+    }
+
+    function setMessages(messages){
+      localStorage.setItem(CHAT_STORAGE_KEY, JSON.stringify(messages));
+    }
+
+    function removeDuplicateMessages(messages){
+      const cleaned = [];
+      messages.forEach(function(message){
+        const last = cleaned[cleaned.length - 1];
+        const sameAsLast = last && last.sender === message.sender && last.name === message.name && last.text === message.text;
+        if(!sameAsLast){
+          cleaned.push(message);
+        }
+      });
+      return cleaned;
+    }
+
+    function ensureDefaultMessages(){
+      let messages = getMessages();
+      messages = removeDuplicateMessages(messages);
+
+      if(messages.length === 0){
+        messages = [
+          {
+            sender: 'admin',
+            name: 'Quản trị viên',
+            text: 'Xin chào 👋 Mình là quản trị viên của English for Kids. Bạn cứ để lại lời nhắn, mình sẽ hỗ trợ đăng ký khóa học nhé!',
+            time: getNowTime()
+          }
+        ];
+      }
+
+      setMessages(messages);
+    }
+
+    function renderMessages(){
+      const chatBody = document.getElementById('chatBody');
+      const messages = removeDuplicateMessages(getMessages());
+      setMessages(messages);
+
+      let html = '<div class="day-tag">Hôm nay, ' + getTodayLabel() + '</div>';
+
+      messages.forEach(function(message){
+        const isUser = message.sender === 'user';
+        html += '<div class="message-row ' + (isUser ? 'user' : '') + '">';
+        html += '<div class="bubble-avatar ' + (isUser ? 'user' : 'admin') + '">' + (isUser ? 'B' : 'QT') + '</div>';
+        html += '<div class="bubble-wrap">';
+        html += '<div class="bubble-name">' + (message.name || '') + '</div>';
+        html += '<div class="bubble ' + (isUser ? 'user' : 'admin') + '">' + (message.text || '') + '</div>';
+        html += '<div class="bubble-time">' + (message.time || '') + '</div>';
+        html += '</div></div>';
+      });
+
+      chatBody.innerHTML = html;
+      chatBody.scrollTop = chatBody.scrollHeight;
+    }
+
+    function sendMessage(){
+      if(isSending) return;
+
+      const input = document.getElementById('messageInput');
+      const text = input.value.trim();
+
+      if(!text){
+        alert('Bạn hãy nhập tin nhắn trước khi gửi nhé.');
+        return;
+      }
+
+      const now = Date.now();
+      const isDuplicateFast = text === lastSentText && (now - lastSentAt) < 1200;
+      if(isDuplicateFast){
+        input.value = '';
+        return;
+      }
+
+      isSending = true;
+
+      let messages = getMessages();
+      const last = messages[messages.length - 1];
+      const sameAsLast = last && last.sender === 'user' && last.text === text;
+
+      if(!sameAsLast){
+        messages.push({
+          sender: 'user',
+          name: 'Bạn',
+          text: text,
+          time: getNowTime()
+        });
+      }
+
+      messages = removeDuplicateMessages(messages);
+      setMessages(messages);
+
+      lastSentText = text;
+      lastSentAt = now;
+      input.value = '';
+      renderMessages();
+
+      setTimeout(function(){
+        isSending = false;
+      }, 200);
+    }
+
+    document.addEventListener('DOMContentLoaded', function(){
+      ensureDefaultMessages();
+      renderMessages();
+
+      const input = document.getElementById('messageInput');
+      input.addEventListener('keydown', function(e){
+        if(e.key === 'Enter' && !e.shiftKey){
+          e.preventDefault();
+          sendMessage();
+        }
+      });
+    });
+  </script>
+</body>
+</html>

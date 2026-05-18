@@ -1,0 +1,800 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>QL Chương trình giáo viên</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
+
+  <style>
+    *{margin:0;padding:0;box-sizing:border-box;font-family:'Inter',sans-serif}
+    body{display:flex;background:#f8fafc;min-height:100vh;color:#0f172a}
+    .sidebar{width:260px;background:white;padding:30px 20px;box-shadow:0 15px 35px rgba(0,0,0,0.05);position:relative;flex-shrink:0}
+    .logo{font-size:22px;font-weight:800;color:#3b82f6;margin-bottom:40px}
+    .menu{list-style:none;position:relative}
+    .menu a{text-decoration:none;color:inherit}
+    .menu li{padding:14px 20px;margin-bottom:8px;border-radius:10px;color:#64748b;font-weight:500;cursor:pointer;transition:0.25s}
+    .menu li:hover{color:#3b82f6;background:#eff6ff}
+    .menu li.active{color:#3b82f6;font-weight:600;background:#eff6ff}
+    .active-bar{position:absolute;left:0;width:5px;height:42px;background:#3b82f6;border-radius:6px;transition:0.3s}
+
+    .main{flex:1;padding:40px}
+    .topbar{display:flex;justify-content:space-between;align-items:center;margin-bottom:26px;gap:16px;flex-wrap:wrap}
+    .topbar-left{display:flex;flex-direction:column;gap:6px}
+    .page-breadcrumb{font-size:14px;color:#64748b}
+    .page-title{font-size:28px;font-weight:700;color:#111827}
+    .topbar-right{display:flex;align-items:center;gap:12px;flex-wrap:wrap}
+
+    .avatar-box{position:relative;cursor:pointer}
+    .avatar{width:42px;height:42px;border-radius:50%;background:linear-gradient(135deg,#3b82f6,#6366f1);display:flex;align-items:center;justify-content:center;color:white;font-weight:700}
+    .dropdown{position:absolute;top:55px;right:0;background:white;border-radius:10px;box-shadow:0 10px 25px rgba(0,0,0,0.1);display:none;padding:10px;z-index:20;min-width:130px}
+    .dropdown button{border:none;background:none;cursor:pointer;padding:8px 12px;color:red;font-weight:500;border-radius:8px;width:100%;text-align:left}
+    .dropdown button:hover{background:#fef2f2}
+    .dropdown.show{display:block}
+
+    .status-banner{
+      display:none;
+      margin-bottom:18px;
+      padding:14px 16px;
+      border-radius:14px;
+      font-size:14px;
+      font-weight:600;
+      line-height:1.7;
+    }
+    .status-banner.show{display:block}
+    .status-banner.suspended{
+      background:#fef2f2;
+      color:#b91c1c;
+      border:1px solid #fecaca;
+    }
+
+    .summary-box{background:linear-gradient(135deg,#2563eb,#4f46e5);color:white;border-radius:20px;padding:24px;margin-bottom:22px;box-shadow:0 18px 38px rgba(37,99,235,0.18);display:flex;justify-content:space-between;align-items:center;gap:18px;flex-wrap:wrap}
+    .summary-box h2{font-size:24px;margin-bottom:8px}
+    .summary-box p{font-size:14px;line-height:1.7;max-width:760px;opacity:0.96}
+    .summary-actions{display:flex;gap:10px;flex-wrap:wrap}
+    .summary-btn{border:none;border-radius:12px;padding:12px 16px;font-weight:700;cursor:pointer}
+    .summary-btn.primary{background:white;color:#2563eb}
+    .summary-btn.primary:hover{background:#eff6ff}
+    .summary-btn.secondary{background:rgba(255,255,255,0.14);color:white;border:1px solid rgba(255,255,255,0.28)!important}
+    .summary-btn.secondary:hover{background:rgba(255,255,255,0.22)}
+    .summary-btn.disabled{
+      background:#cbd5e1 !important;
+      color:#64748b !important;
+      cursor:not-allowed !important;
+      border:none !important;
+    }
+
+    .controls{display:flex;gap:10px;margin-bottom:20px;flex-wrap:wrap;align-items:center}
+    .controls input,.controls select{padding:10px 12px;border-radius:10px;border:1px solid #dbe2ea;background:white;height:44px;outline:none;min-width:180px;font-size:14px}
+    .controls input{flex:1;min-width:260px}
+    .controls input:focus,.controls select:focus,.form-group input:focus,.form-group select:focus,.form-group textarea:focus{border-color:#93c5fd;box-shadow:0 0 0 3px rgba(59,130,246,0.08)}
+    .add-btn{background:#3b82f6;color:white;border:none;padding:10px 16px;border-radius:10px;cursor:pointer;font-weight:700;height:44px}
+    .add-btn:hover{background:#2563eb}
+    .add-btn.disabled{
+      background:#cbd5e1;
+      color:#64748b;
+      cursor:not-allowed;
+    }
+
+    .table-wrap{background:white;border-radius:16px;box-shadow:0 10px 25px rgba(0,0,0,0.05);overflow:hidden}
+    table{width:100%;border-collapse:collapse;background:white}
+    th,td{padding:14px 12px;text-align:left;border-bottom:1px solid #eee;vertical-align:middle;font-size:14px}
+    th{background:#f8fafc;color:#475569;font-weight:700}
+    tr:last-child td{border-bottom:none}
+    .program-img{width:64px;height:44px;object-fit:cover;border-radius:8px;border:1px solid #e5e7eb;background:#f1f5f9}
+    .program-img.placeholder{display:flex;align-items:center;justify-content:center;font-size:20px;color:#94a3b8}
+    .program-name{font-weight:700;color:#111827;margin-bottom:4px}
+    .program-note{font-size:12px;color:#64748b;line-height:1.5;max-width:280px}
+    .status-badge{display:inline-flex;align-items:center;justify-content:center;padding:6px 12px;border-radius:999px;font-size:12px;font-weight:700;white-space:nowrap}
+    .status-approved{background:#dcfce7;color:#15803d}
+    .status-pending{background:#ffedd5;color:#c2410c}
+    .status-other{background:#e5e7eb;color:#475569}
+    .source-tag{font-size:12px;color:#64748b;font-weight:600}
+    .actions{white-space:nowrap}
+    .icon-btn{border:none;background:#f8fafc;border-radius:10px;padding:8px 10px;cursor:pointer;margin-right:6px;font-size:13px;font-weight:700;transition:0.2s}
+    .icon-btn.view{color:#0f766e;background:#ecfdf5}
+    .icon-btn.view:hover{background:#d1fae5}
+    .icon-btn.edit{color:#2563eb;background:#eff6ff}
+    .icon-btn.edit:hover{background:#dbeafe}
+    .empty-state{padding:36px 20px;text-align:center;color:#64748b;font-size:14px;line-height:1.8}
+
+    .modal{position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(15,23,42,0.28);display:none;align-items:center;justify-content:center;z-index:999;padding:24px}
+    .modal-box{width:900px;max-width:95vw;max-height:92vh;overflow-y:auto;background:white;border-radius:24px;padding:28px 32px 30px;box-shadow:0 25px 60px rgba(15,23,42,0.18);position:relative}
+    .modal-close{position:absolute;top:20px;right:24px;font-size:28px;line-height:1;color:#64748b;cursor:pointer;border:none;background:none}
+    .modal-title{font-size:18px;font-weight:700;color:#111827;margin-bottom:6px}
+    .modal-subtitle{font-size:16px;color:#6b7280;margin-bottom:26px}
+    .steps{display:flex;justify-content:center;align-items:center;gap:16px;margin-bottom:10px}
+    .step-circle{width:44px;height:44px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:22px;font-weight:500;border:1.5px solid #d1d5db;color:#6b7280;background:white}
+    .step-circle.active{border-color:#60a5fa;background:#eff6ff;color:#2563eb}
+    .step-line{width:56px;height:2px;background:#e5e7eb}
+    .step-text{display:flex;justify-content:center;gap:90px;font-size:18px;margin-bottom:28px}
+    .step-text .active-text{font-weight:700;color:#111827}
+    .step-text .inactive-text{font-weight:500;color:#9ca3af}
+    .step-pane{display:none}
+    .step-pane.active{display:block}
+
+    .cover-upload{border:1.5px dashed #60a5fa;border-radius:18px;height:180px;display:flex;align-items:center;justify-content:center;flex-direction:column;cursor:pointer;margin-bottom:22px;background:#fff;transition:0.2s;overflow:hidden;position:relative}
+    .cover-upload:hover{background:#f8fbff}
+    .cover-icon{font-size:36px;color:#9ca3af;margin-bottom:8px}
+    .cover-text{font-size:16px;color:#9ca3af;font-weight:500}
+    .file-name{margin-top:8px;font-size:13px;color:#64748b}
+    .hidden-file{display:none}
+    .preview-image{display:none;width:100%;height:100%;object-fit:cover;border-radius:16px}
+    .upload-placeholder{display:flex;align-items:center;justify-content:center;flex-direction:column;width:100%;height:100%;padding:18px;text-align:center}
+
+    .form-group{margin-bottom:16px}
+    .form-group label{display:block;font-size:16px;font-weight:500;color:#374151;margin-bottom:8px}
+    .required{color:#ef4444}
+    .form-group input,.form-group select,.form-group textarea{width:100%;min-height:52px;padding:12px 14px;border:1px solid #dbe2ea;border-radius:12px;font-size:16px;outline:none;background:white;resize:vertical}
+    .form-group textarea{min-height:100px}
+    .form-row{display:grid;grid-template-columns:1fr 1fr 1fr;gap:14px}
+
+    .lesson-card{border:1px solid #e5e7eb;border-radius:16px;padding:16px;margin-bottom:14px;background:#f8fafc}
+    .lesson-head{display:flex;justify-content:space-between;align-items:center;margin-bottom:12px;gap:10px}
+    .lesson-title{font-size:16px;font-weight:700;color:#111827}
+    .lesson-remove{background:#fee2e2;color:#dc2626;border:none;padding:8px 12px;border-radius:10px;cursor:pointer;font-weight:700}
+    .lesson-remove:hover{background:#fecaca}
+    .add-lesson{background:#eff6ff;color:#2563eb;border:none;padding:12px 16px;border-radius:12px;cursor:pointer;font-weight:700;margin-top:8px}
+    .add-lesson:hover{background:#dbeafe}
+
+    .modal-actions{display:flex;justify-content:flex-end;gap:14px;margin-top:8px;flex-wrap:wrap}
+    .cancel-btn{background:white;color:#2563eb;border:1px solid #93c5fd;padding:12px 28px;border-radius:12px;font-weight:600;cursor:pointer}
+    .save-btn{background:#2563eb;color:white;border:none;padding:12px 28px;border-radius:12px;font-weight:600;cursor:pointer}
+    .save-btn:hover{background:#1d4ed8}
+    .save-btn.disabled{
+      background:#cbd5e1;
+      color:#64748b;
+      cursor:not-allowed;
+    }
+
+    @media (max-width: 768px){
+      .modal-box{width:100%;padding:22px 18px;border-radius:18px}
+      .form-row{grid-template-columns:1fr}
+      .step-text{gap:34px;font-size:15px}
+      body{flex-direction:column}
+      .sidebar{width:100%}
+      .main{padding:20px}
+    }
+  </style>
+</head>
+
+<body>
+  <div class="sidebar">
+    <div class="logo">English for Kids</div>
+
+    <ul class="menu" id="menu">
+      <div class="active-bar" id="activeBar"></div>
+      <a href="trangchugiaovien.html"><li>Trang chủ</li></a>
+      <a href="QLchuongtrinhgiaovien.html"><li class="active">QL Chương trình</li></a>
+      <a href="QLbaitapgiaovien.html"><li>Bài tập</li></a>
+      <a href="thongtingiaovien.html"><li>Thông tin cá nhân</li></a>
+    </ul>
+  </div>
+
+  <div class="main">
+    <div class="topbar">
+      <div class="topbar-left">
+        <div class="page-breadcrumb">QL Chương trình giáo viên</div>
+        <div class="page-title">Quản lý chương trình</div>
+      </div>
+
+      <div class="topbar-right">
+        <div class="avatar-box" onclick="toggleMenu()">
+          <div class="avatar">GV</div>
+          <div class="dropdown" id="dropdownMenu">
+            <button onclick="logout()">Đăng xuất</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div id="statusBanner" class="status-banner suspended"></div>
+
+    <div class="summary-box">
+      <div>
+        <h2>Chương trình giảng dạy</h2>
+        <p>Giáo viên được xem chương trình do quản trị viên thêm, được tạo chương trình mới để chờ phê duyệt, và chỉ được nhập liệu cho chương trình do chính giáo viên tạo sau khi đã được phê duyệt.</p>
+      </div>
+
+      <div class="summary-actions">
+        <button class="summary-btn primary" id="summaryAddBtn" onclick="openModal()">+ Thêm chương trình</button>
+        <button class="summary-btn secondary" onclick="loadPrograms()">Làm mới</button>
+      </div>
+    </div>
+
+    <div class="controls">
+      <input type="text" id="searchInput2" placeholder="Tìm theo tên chương trình">
+      <select id="statusFilter">
+        <option value="all">Tất cả trạng thái</option>
+        <option value="approved">Đã phê duyệt</option>
+        <option value="pending">Chờ phê duyệt</option>
+      </select>
+      <select id="sourceFilter">
+        <option value="all">Tất cả nguồn</option>
+        <option value="admin">Quản trị viên thêm</option>
+        <option value="teacher">Giáo viên tạo</option>
+      </select>
+      <button class="add-btn" id="toolbarAddBtn" onclick="openModal()">+ Thêm chương trình</button>
+    </div>
+
+    <div class="table-wrap">
+      <table>
+        <thead>
+          <tr>
+            <th>Ảnh</th>
+            <th>Tên chương trình</th>
+            <th>Ngày tạo</th>
+            <th>Khối</th>
+            <th>Môn học</th>
+            <th>Trạng thái</th>
+            <th>Nguồn</th>
+            <th></th>
+          </tr>
+        </thead>
+        <tbody id="programTable"></tbody>
+      </table>
+
+      <div class="empty-state" id="emptyState" style="display:none;">
+        Không có chương trình nào phù hợp.
+      </div>
+    </div>
+  </div>
+
+  <div class="modal" id="modal">
+    <div class="modal-box">
+      <button class="modal-close" onclick="closeModal()">×</button>
+
+      <div class="modal-title">Tạo chương trình</div>
+      <div class="modal-subtitle">Tạo chương trình học mới</div>
+
+      <div class="steps">
+        <div class="step-circle active" id="stepCircle1">1</div>
+        <div class="step-line"></div>
+        <div class="step-circle" id="stepCircle2">2</div>
+      </div>
+
+      <div class="step-text">
+        <span class="active-text" id="stepText1">Thông tin</span>
+        <span class="inactive-text" id="stepText2">Bài học</span>
+      </div>
+
+      <div class="step-pane active" id="stepPane1">
+        <label class="cover-upload" for="image" id="uploadBox">
+          <img id="previewImage" class="preview-image" src="" alt="Xem trước ảnh">
+          <div class="upload-placeholder" id="uploadPlaceholder">
+            <div class="cover-icon">⊕</div>
+            <div class="cover-text">Ảnh bìa</div>
+            <div class="file-name" id="fileName">Chưa chọn ảnh</div>
+          </div>
+        </label>
+
+        <input class="hidden-file" type="file" id="image" accept="image/*">
+
+        <div class="form-group">
+          <label>Tên chương trình <span class="required">(*)</span></label>
+          <input type="text" id="name" placeholder="Nhập tên chương trình">
+        </div>
+
+        <div class="form-row">
+          <div class="form-group">
+            <label>Khối <span class="required">(*)</span></label>
+            <select id="grade">
+              <option value="">Chọn khối</option>
+              <option>Khối 1</option>
+              <option>Khối 2</option>
+              <option>Khối 3</option>
+              <option>Khối 4</option>
+              <option>Khối 5</option>
+            </select>
+          </div>
+
+          <div class="form-group">
+            <label>Môn học <span class="required">(*)</span></label>
+            <select id="subject">
+              <option value="">Chọn môn học</option>
+              <option>Tiếng Anh</option>
+              <option>Toán</option>
+              <option>Khoa học</option>
+              <option>Tiếng Việt</option>
+            </select>
+          </div>
+
+          <div class="form-group">
+            <label>Cấp độ <span class="required">(*)</span></label>
+            <select id="level">
+              <option>Cơ bản</option>
+              <option selected>Nâng cao</option>
+              <option>Chuyên sâu</option>
+            </select>
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label>Mô tả chương trình</label>
+          <textarea id="description" placeholder="Nhập mô tả chương trình"></textarea>
+        </div>
+
+        <div class="form-group">
+          <label>Mục tiêu học tập</label>
+          <textarea id="goal" placeholder="Nhập mục tiêu học tập"></textarea>
+        </div>
+
+        <div class="modal-actions">
+          <button class="cancel-btn" onclick="closeModal()">Huỷ bỏ</button>
+          <button class="save-btn" id="nextStepBtn" onclick="nextStep()">Tiếp theo</button>
+        </div>
+      </div>
+
+      <div class="step-pane" id="stepPane2">
+        <div id="lessonContainer"></div>
+
+        <button class="add-lesson" onclick="addLessonRow()">+ Thêm bài học</button>
+
+        <div class="modal-actions">
+          <button class="cancel-btn" onclick="prevStep()">Quay lại</button>
+          <button class="save-btn" id="saveProgramBtn" onclick="saveProgram()">Lưu chương trình</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    let teacherSuspended = false;
+    let allPrograms = [];
+    let filteredPrograms = [];
+    let editingProgramId = null;
+    let currentImageBase64 = "";
+
+    function toggleMenu(){
+      document.getElementById("dropdownMenu").classList.toggle("show");
+    }
+
+    async function logout(){
+      try{
+        await fetch("api/logout.php");
+      }catch(e){}
+      window.location.href = "dangnhap.html";
+    }
+
+    const menuItems = document.querySelectorAll(".menu li");
+    const activeBar = document.getElementById("activeBar");
+
+    function moveBar(element){
+      activeBar.style.top = element.offsetTop + "px";
+      activeBar.style.height = element.offsetHeight + "px";
+    }
+
+    menuItems.forEach(item=>{
+      item.addEventListener("click",function(){
+        menuItems.forEach(i=>i.classList.remove("active"));
+        this.classList.add("active");
+        moveBar(this);
+      });
+    });
+
+    function isApprovedStatus(status){
+      const s = String(status || "").toLowerCase();
+      return s.includes("duyệt") || s.includes("active") || s.includes("hoạt động");
+    }
+
+    function getStatusClass(status){
+      const s = String(status || "").toLowerCase();
+      if(isApprovedStatus(status)) return "status-approved";
+      if(s.includes("chờ")) return "status-pending";
+      return "status-other";
+    }
+
+    async function checkTeacherStatus(){
+      try{
+        const res = await fetch("api/giaovien_check_status.php");
+        const data = await res.json();
+
+        if(!data.success) return;
+
+        teacherSuspended = data.status === "suspended";
+
+        const banner = document.getElementById("statusBanner");
+        const summaryBtn = document.getElementById("summaryAddBtn");
+        const toolbarBtn = document.getElementById("toolbarAddBtn");
+        const nextBtn = document.getElementById("nextStepBtn");
+        const saveBtn = document.getElementById("saveProgramBtn");
+
+        if(teacherSuspended){
+          banner.classList.add("show");
+          banner.innerHTML = "Tài khoản giáo viên của bạn đang ở trạng thái <strong>đình chỉ</strong>. Bạn chỉ được xem chương trình, không thể thêm, sửa hoặc nhập liệu.";
+          summaryBtn.disabled = true;
+          summaryBtn.classList.add("disabled");
+          toolbarBtn.disabled = true;
+          toolbarBtn.classList.add("disabled");
+          nextBtn.disabled = true;
+          nextBtn.classList.add("disabled");
+          saveBtn.disabled = true;
+          saveBtn.classList.add("disabled");
+        }else{
+          banner.classList.remove("show");
+          banner.innerHTML = "";
+          summaryBtn.disabled = false;
+          summaryBtn.classList.remove("disabled");
+          toolbarBtn.disabled = false;
+          toolbarBtn.classList.remove("disabled");
+          nextBtn.disabled = false;
+          nextBtn.classList.remove("disabled");
+          saveBtn.disabled = false;
+          saveBtn.classList.remove("disabled");
+        }
+      }catch(error){
+        console.error("Không kiểm tra được trạng thái giáo viên:", error);
+      }
+    }
+
+    async function loadPrograms(){
+      const res = await fetch("api/giaovien_chuongtrinh_load.php");
+      const data = await res.json();
+
+      if(!data.success){
+        alert(data.message || "Không tải được chương trình");
+        return;
+      }
+
+      allPrograms = [...(data.adminPrograms || []), ...(data.teacherPrograms || [])];
+      renderPrograms();
+    }
+
+    function renderPrograms(){
+      const keyword = document.getElementById("searchInput2").value.trim().toLowerCase();
+      const statusFilter = document.getElementById("statusFilter").value;
+      const sourceFilter = document.getElementById("sourceFilter").value;
+
+      filteredPrograms = allPrograms.filter(program => {
+        const matchKeyword =
+          !keyword ||
+          String(program.name || "").toLowerCase().includes(keyword) ||
+          String(program.subject || "").toLowerCase().includes(keyword) ||
+          String(program.grade || "").toLowerCase().includes(keyword);
+
+        let matchStatus = true;
+        if(statusFilter === "approved"){
+          matchStatus = isApprovedStatus(program.status);
+        }else if(statusFilter === "pending"){
+          matchStatus = !isApprovedStatus(program.status);
+        }
+
+        let matchSource = true;
+        if(sourceFilter !== "all"){
+          matchSource = program.source === sourceFilter;
+        }
+
+        return matchKeyword && matchStatus && matchSource;
+      });
+
+      const table = document.getElementById("programTable");
+      const emptyState = document.getElementById("emptyState");
+      table.innerHTML = "";
+
+      if(!filteredPrograms.length){
+        emptyState.style.display = "block";
+        return;
+      }
+
+      emptyState.style.display = "none";
+
+      filteredPrograms.forEach(program => {
+        const tr = document.createElement("tr");
+
+        tr.innerHTML = `
+          <td>
+            ${
+              program.img
+                ? `<img src="${program.img}" class="program-img">`
+                : `<div class="program-img placeholder">🖼</div>`
+            }
+          </td>
+          <td>
+            <div class="program-name">${program.name}</div>
+            <div class="program-note">${program.description || "Chưa có mô tả"}</div>
+          </td>
+          <td>${program.date || ""}</td>
+          <td>${program.grade || ""}</td>
+          <td>${program.subject || ""}</td>
+          <td><span class="status-badge ${getStatusClass(program.status)}">${program.status}</span></td>
+          <td><span class="source-tag">${program.source === "admin" ? "Quản trị viên thêm" : "Giáo viên tạo"}</span></td>
+          <td class="actions">
+            <button class="icon-btn view" onclick="goToInput('${program.id}')">Xem</button>
+            ${program.source === "teacher" ? `<button class="icon-btn edit" onclick="editProgram('${program.id}')">Sửa</button>` : ``}
+          </td>
+        `;
+        table.appendChild(tr);
+      });
+    }
+
+    function openModal(){
+      if(teacherSuspended){
+        alert("Tài khoản giáo viên đang bị đình chỉ, bạn không thể thêm chương trình.");
+        return;
+      }
+
+      document.getElementById("modal").style.display = "flex";
+      resetForm();
+    }
+
+    function closeModal(){
+      document.getElementById("modal").style.display = "none";
+      resetForm();
+    }
+
+    function resetForm(){
+      document.getElementById("image").value = "";
+      document.getElementById("fileName").innerText = "Chưa chọn ảnh";
+      document.getElementById("name").value = "";
+      document.getElementById("grade").value = "";
+      document.getElementById("subject").value = "";
+      document.getElementById("level").value = "Nâng cao";
+      document.getElementById("description").value = "";
+      document.getElementById("goal").value = "";
+      document.getElementById("previewImage").src = "";
+      document.getElementById("previewImage").style.display = "none";
+      document.getElementById("uploadPlaceholder").style.display = "flex";
+      document.getElementById("lessonContainer").innerHTML = "";
+      currentImageBase64 = "";
+      editingProgramId = null;
+      goStep1ViewOnly();
+      addLessonRow();
+    }
+
+    function goStep1ViewOnly(){
+      document.getElementById("stepPane1").classList.add("active");
+      document.getElementById("stepPane2").classList.remove("active");
+      document.getElementById("stepCircle1").classList.add("active");
+      document.getElementById("stepCircle2").classList.remove("active");
+      document.getElementById("stepText1").className = "active-text";
+      document.getElementById("stepText2").className = "inactive-text";
+    }
+
+    function nextStep(){
+      if(teacherSuspended){
+        alert("Tài khoản giáo viên đang bị đình chỉ, bạn không thể thêm chương trình.");
+        return;
+      }
+
+      const name = document.getElementById("name").value.trim();
+      const grade = document.getElementById("grade").value;
+      const subject = document.getElementById("subject").value;
+
+      if(!name || !grade || !subject){
+        alert("Vui lòng nhập đầy đủ thông tin bắt buộc!");
+        return;
+      }
+
+      document.getElementById("stepPane1").classList.remove("active");
+      document.getElementById("stepPane2").classList.add("active");
+      document.getElementById("stepCircle1").classList.add("active");
+      document.getElementById("stepCircle2").classList.add("active");
+      document.getElementById("stepText1").className = "active-text";
+      document.getElementById("stepText2").className = "active-text";
+    }
+
+    function prevStep(){
+      goStep1ViewOnly();
+    }
+
+    document.getElementById("image").addEventListener("change", function(){
+      const file = this.files[0];
+      const fileName = document.getElementById("fileName");
+      const previewImage = document.getElementById("previewImage");
+      const uploadPlaceholder = document.getElementById("uploadPlaceholder");
+
+      if(file){
+        fileName.innerText = file.name;
+        const reader = new FileReader();
+        reader.onload = function(e){
+          currentImageBase64 = e.target.result;
+          previewImage.src = e.target.result;
+          previewImage.style.display = "block";
+          uploadPlaceholder.style.display = "none";
+        };
+        reader.readAsDataURL(file);
+      }else{
+        fileName.innerText = "Chưa chọn ảnh";
+        previewImage.src = "";
+        previewImage.style.display = "none";
+        uploadPlaceholder.style.display = "flex";
+      }
+    });
+
+    function addLessonRow(lessonData = {}){
+      const lessonContainer = document.getElementById("lessonContainer");
+      const lessonCount = lessonContainer.querySelectorAll(".lesson-card").length + 1;
+
+      const lessonCard = document.createElement("div");
+      lessonCard.className = "lesson-card";
+      lessonCard.innerHTML = `
+        <div class="lesson-head">
+          <div class="lesson-title">Bài học ${lessonCount}</div>
+          <button class="lesson-remove" onclick="removeLessonRow(this)">Xoá</button>
+        </div>
+
+        <div class="form-group">
+          <label>Tên bài học</label>
+          <input type="text" class="lesson-name" placeholder="Nhập tên bài học" value="${lessonData.name || ""}">
+        </div>
+
+        <div class="form-group">
+          <label>Mô tả bài học</label>
+          <textarea class="lesson-description" placeholder="Nhập mô tả bài học">${lessonData.description || ""}</textarea>
+        </div>
+      `;
+      lessonContainer.appendChild(lessonCard);
+      updateLessonTitles();
+    }
+
+    function removeLessonRow(button){
+      button.closest(".lesson-card").remove();
+      updateLessonTitles();
+    }
+
+    function updateLessonTitles(){
+      document.querySelectorAll(".lesson-card").forEach((card, index) => {
+        const title = card.querySelector(".lesson-title");
+        title.innerText = `Bài học ${index + 1}`;
+      });
+    }
+
+    function collectLessons(){
+      const lessons = [];
+      document.querySelectorAll(".lesson-card").forEach(card => {
+        const lessonName = card.querySelector(".lesson-name").value.trim();
+        const lessonDescription = card.querySelector(".lesson-description").value.trim();
+        if(lessonName){
+          lessons.push({ name: lessonName, description: lessonDescription });
+        }
+      });
+      return lessons;
+    }
+
+    async function saveProgram(){
+      if(teacherSuspended){
+        alert("Tài khoản giáo viên đang bị đình chỉ, bạn không thể lưu chương trình.");
+        return;
+      }
+
+      const name = document.getElementById("name").value.trim();
+      const grade = document.getElementById("grade").value;
+      const subject = document.getElementById("subject").value;
+      const level = document.getElementById("level").value;
+      const description = document.getElementById("description").value.trim();
+      const goal = document.getElementById("goal").value.trim();
+      const lessons = collectLessons();
+
+      if(!name || !grade || !subject){
+        alert("Vui lòng nhập đầy đủ thông tin!");
+        return;
+      }
+
+      const formData = new FormData();
+      formData.append("img", currentImageBase64 || "");
+      formData.append("name", name);
+      formData.append("grade", grade);
+      formData.append("subject", subject);
+      formData.append("level", level);
+      formData.append("description", description);
+      formData.append("goal", goal);
+      formData.append("lessons_json", JSON.stringify(lessons));
+
+      let apiUrl = "api/giaovien_chuongtrinh_save.php";
+      if(editingProgramId){
+        apiUrl = "api/giaovien_chuongtrinh_update.php";
+        formData.append("program_id", Number(String(editingProgramId).replace("teacher_", "")));
+      }
+
+      const res = await fetch(apiUrl, {
+        method: "POST",
+        body: formData
+      });
+
+      const data = await res.json();
+      if(!data.success){
+        alert(data.message || "Không lưu được chương trình");
+        return;
+      }
+
+      closeModal();
+      await loadPrograms();
+      alert(data.message || "Đã lưu chương trình");
+    }
+
+    function findProgramById(id){
+      return allPrograms.find(p => p.id === id);
+    }
+
+    function editProgram(id){
+      if(teacherSuspended){
+        alert("Tài khoản giáo viên đang bị đình chỉ, bạn không thể sửa chương trình.");
+        return;
+      }
+
+      const program = findProgramById(id);
+      if(!program || program.source !== "teacher") return;
+
+      editingProgramId = id;
+      currentImageBase64 = program.img || "";
+
+      document.getElementById("name").value = program.name || "";
+      document.getElementById("grade").value = program.grade || "";
+      document.getElementById("subject").value = program.subject || "";
+      document.getElementById("level").value = program.level || "Nâng cao";
+      document.getElementById("description").value = program.description || "";
+      document.getElementById("goal").value = program.goal || "";
+
+      if(program.img){
+        document.getElementById("previewImage").src = program.img;
+        document.getElementById("previewImage").style.display = "block";
+        document.getElementById("uploadPlaceholder").style.display = "none";
+        document.getElementById("fileName").innerText = "Giữ ảnh hiện tại hoặc chọn ảnh mới";
+      }else{
+        document.getElementById("previewImage").style.display = "none";
+        document.getElementById("uploadPlaceholder").style.display = "flex";
+        document.getElementById("fileName").innerText = "Chưa chọn ảnh";
+      }
+
+      document.getElementById("lessonContainer").innerHTML = "";
+      if(program.lessons && program.lessons.length){
+        program.lessons.forEach(lesson => addLessonRow(lesson));
+      }else{
+        addLessonRow();
+      }
+
+      document.getElementById("modal").style.display = "flex";
+      goStep1ViewOnly();
+    }
+
+    function goToInput(id){
+      const program = findProgramById(id);
+      if(!program) return;
+
+      const programId = program.realId || String(program.id || "").replace("admin_", "").replace("teacher_", "");
+      const source = program.source || "admin";
+
+      localStorage.setItem("teacherSelectedProgramId", String(programId).trim());
+      localStorage.setItem("inputRole", "teacher");
+
+      let readOnly = "true";
+
+      if(program.source === "teacher" && isApprovedStatus(program.status) && !teacherSuspended){
+        readOnly = "false";
+      }
+
+      if(program.source === "admin"){
+        readOnly = "true";
+      }
+
+      if(teacherSuspended){
+        readOnly = "true";
+      }
+
+      localStorage.setItem("inputReadOnly", readOnly);
+
+      window.location.href =
+        "nhaplieu.html?program_id=" +
+        encodeURIComponent(programId) +
+        "&source=" +
+        encodeURIComponent(source);
+    }
+
+    document.getElementById("searchInput2").addEventListener("input", renderPrograms);
+    document.getElementById("statusFilter").addEventListener("change", renderPrograms);
+    document.getElementById("sourceFilter").addEventListener("change", renderPrograms);
+
+    window.onload = async function(){
+      moveBar(document.querySelector(".menu li.active"));
+      await checkTeacherStatus();
+      await loadPrograms();
+    }
+
+    document.addEventListener("click", function(e){
+      if(!e.target.closest(".avatar-box")){
+        document.getElementById("dropdownMenu").classList.remove("show");
+      }
+    });
+  </script>
+</body>
+</html>

@@ -1,0 +1,1486 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>QL Chương trình</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+  <style>
+    *{margin:0;padding:0;box-sizing:border-box;font-family:'Inter',sans-serif}
+
+    :root{
+      --primary:#2563eb;
+      --primary-2:#4f46e5;
+      --cyan:#06b6d4;
+      --green:#16a34a;
+      --orange:#ea580c;
+      --red:#ef4444;
+      --text:#0f172a;
+      --muted:#64748b;
+      --line:#e5eef8;
+      --soft:#eef5ff;
+      --bg:#f4f7fb;
+      --shadow-soft:0 10px 30px rgba(15,23,42,.06);
+    }
+
+    body{
+      display:flex;
+      min-height:100vh;
+      color:var(--text);
+      background:
+        radial-gradient(circle at top left, rgba(37,99,235,.08), transparent 26%),
+        radial-gradient(circle at top right, rgba(124,58,237,.08), transparent 20%),
+        var(--bg);
+    }
+
+    .sidebar{
+      width:280px;
+      background:rgba(255,255,255,.88);
+      backdrop-filter:blur(10px);
+      border-right:1px solid rgba(226,232,240,.9);
+      padding:24px 18px;
+      position:sticky;
+      top:0;
+      height:100vh;
+      flex-shrink:0;
+      z-index:5;
+    }
+
+    .brand{
+      display:flex;
+      align-items:center;
+      gap:14px;
+      padding:14px;
+      border-radius:22px;
+      background:linear-gradient(135deg, rgba(37,99,235,.10), rgba(79,70,229,.08));
+      margin-bottom:28px;
+      border:1px solid rgba(191,219,254,.6);
+    }
+
+    .brand-mark{
+      width:56px;
+      height:56px;
+      border-radius:18px;
+      background:linear-gradient(135deg,var(--primary),var(--primary-2));
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      color:#fff;
+      font-size:22px;
+      font-weight:900;
+      box-shadow:0 12px 28px rgba(37,99,235,.24);
+      flex-shrink:0;
+    }
+
+    .brand-text strong{
+      display:block;
+      font-size:18px;
+      font-weight:800;
+      letter-spacing:-.02em;
+    }
+
+    .brand-text span{
+      display:block;
+      font-size:12px;
+      color:var(--muted);
+      margin-top:4px;
+    }
+
+    .menu-wrap{position:relative}
+    .menu{list-style:none;position:relative}
+    .menu a{text-decoration:none;color:inherit;display:block}
+
+    .menu li{
+      padding:14px 16px;
+      margin-bottom:8px;
+      border-radius:16px;
+      color:var(--muted);
+      font-weight:600;
+      cursor:pointer;
+      transition:.25s ease;
+    }
+
+    .menu li:hover{
+      background:var(--soft);
+      color:var(--primary);
+      transform:translateX(2px);
+    }
+
+    .menu li.active{
+      background:linear-gradient(90deg, rgba(37,99,235,.14), rgba(79,70,229,.10));
+      color:var(--primary);
+      box-shadow:inset 0 0 0 1px rgba(147,197,253,.35);
+    }
+
+    .submenu{
+      display:none;
+      margin-top:6px;
+      margin-left:14px;
+      list-style:none;
+    }
+
+    .submenu li{
+      font-size:14px;
+      padding:10px 14px;
+      margin-bottom:6px;
+      border-radius:12px;
+    }
+
+    .menu-parent.active .submenu{display:block}
+    .arrow{transition:.3s;font-size:12px}
+
+    .active-bar{
+      position:absolute;
+      left:-18px;
+      width:5px;
+      height:42px;
+      border-radius:0 8px 8px 0;
+      background:linear-gradient(180deg,var(--primary),var(--primary-2));
+      transition:.3s;
+    }
+
+    .main{
+      flex:1;
+      padding:28px;
+      overflow-y:auto;
+    }
+
+    .topbar{
+      display:flex;
+     align-items:center;
+     margin-bottom:24px;
+    }
+
+    .page-title h1{
+      font-size:30px;
+      font-weight:900;
+      letter-spacing:-.03em;
+      margin-bottom:6px;
+    }
+
+    .page-title p{
+      font-size:14px;
+      color:var(--muted);
+      line-height:1.7;
+    }
+
+    .topbar-right{
+      display:flex;
+      align-items:center;
+      gap:14px;
+      margin-left:auto;
+    }
+
+    .search-top{position:relative}
+
+    .search-top input{
+      width:320px;
+      height:48px;
+      border:1px solid var(--line);
+      border-radius:16px;
+      padding:0 14px 0 42px;
+      outline:none;
+      background:rgba(255,255,255,.92);
+      font-size:14px;
+      box-shadow:var(--shadow-soft);
+    }
+
+    .search-top input:focus{
+      border-color:#93c5fd;
+      box-shadow:0 0 0 4px rgba(59,130,246,.08);
+    }
+
+    .search-top span{
+      position:absolute;
+      left:14px;
+      top:50%;
+      transform:translateY(-50%);
+      color:#94a3b8;
+      font-size:15px;
+    }
+
+    .avatar-box{position:relative;cursor:pointer}
+
+    .avatar{
+      width:46px;
+      height:46px;
+      border-radius:16px;
+      background:linear-gradient(135deg,var(--primary),var(--primary-2));
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      color:#fff;
+      font-weight:800;
+      box-shadow:0 12px 28px rgba(59,130,246,.22);
+    }
+
+    .dropdown{
+      position:absolute;
+      top:58px;
+      right:0;
+      background:white;
+      border-radius:16px;
+      box-shadow:0 18px 40px rgba(15,23,42,.14);
+      display:none;
+      padding:10px;
+      min-width:160px;
+      z-index:100;
+      border:1px solid #eef2f7;
+    }
+
+    .dropdown.show{display:block}
+
+    .dropdown button{
+      width:100%;
+      border:none;
+      background:none;
+      cursor:pointer;
+      padding:10px 12px;
+      color:var(--red);
+      font-weight:700;
+      border-radius:10px;
+      text-align:left;
+    }
+
+    .dropdown button:hover{background:#fef2f2}
+
+    .hero{
+      position:relative;
+      overflow:hidden;
+      background:linear-gradient(135deg,#1d4ed8 0%,#4338ca 55%,#7c3aed 100%);
+      border-radius:32px;
+      padding:32px;
+      display:grid;
+      grid-template-columns:1.2fr .8fr;
+      gap:22px;
+      color:white;
+      box-shadow:0 24px 60px rgba(37,99,235,.23);
+      margin-bottom:24px;
+      align-items:center;
+    }
+
+    .hero::before{
+      content:'';
+      position:absolute;
+      width:260px;
+      height:260px;
+      border-radius:50%;
+      background:rgba(255,255,255,.08);
+      right:-70px;
+      top:-90px;
+    }
+
+    .hero::after{
+      content:'';
+      position:absolute;
+      width:180px;
+      height:180px;
+      border-radius:50%;
+      background:rgba(255,255,255,.08);
+      left:-50px;
+      bottom:-60px;
+    }
+
+    .hero-content,.hero-side{position:relative;z-index:1}
+
+    .hero-badge{
+      display:inline-flex;
+      align-items:center;
+      gap:8px;
+      padding:9px 14px;
+      border-radius:999px;
+      background:rgba(255,255,255,.14);
+      border:1px solid rgba(255,255,255,.18);
+      font-size:12px;
+      font-weight:800;
+      margin-bottom:16px;
+    }
+
+    .hero-content h2{
+      font-size:34px;
+      font-weight:900;
+      margin-bottom:12px;
+      line-height:1.2;
+      letter-spacing:-.03em;
+    }
+
+    .hero-content p{
+      font-size:15px;
+      line-height:1.8;
+      opacity:.96;
+      max-width:620px;
+    }
+
+    .hero-actions{
+      display:flex;
+      gap:12px;
+      flex-wrap:wrap;
+      margin-top:18px;
+    }
+
+    .hero-btn{
+      border:none;
+      border-radius:16px;
+      padding:12px 18px;
+      font-weight:800;
+      cursor:pointer;
+      transition:.2s;
+      font-size:14px;
+    }
+
+    .hero-btn.primary{
+      background:white;
+      color:var(--primary);
+    }
+
+    .hero-btn.primary:hover{transform:translateY(-2px)}
+
+    .hero-btn.secondary{
+      background:rgba(255,255,255,.14);
+      color:white;
+      border:1px solid rgba(255,255,255,.2);
+    }
+
+    .hero-btn.secondary:hover{
+      background:rgba(255,255,255,.2);
+      transform:translateY(-2px);
+    }
+
+    .hero-mini-grid{
+      display:grid;
+      grid-template-columns:1fr 1fr;
+      gap:12px;
+    }
+
+    .hero-mini{
+      padding:16px;
+      border-radius:20px;
+      background:rgba(255,255,255,.12);
+      border:1px solid rgba(255,255,255,.18);
+      backdrop-filter:blur(8px);
+    }
+
+    .hero-mini strong{
+      display:block;
+      font-size:24px;
+      font-weight:900;
+      margin-bottom:6px;
+    }
+
+    .hero-mini span{
+      font-size:13px;
+      line-height:1.6;
+      opacity:.95;
+    }
+
+    .stats{
+      display:grid;
+      grid-template-columns:repeat(4,1fr);
+      gap:18px;
+      margin-bottom:24px;
+    }
+
+    .stat-card{
+      background:rgba(255,255,255,.92);
+      border-radius:24px;
+      padding:22px;
+      box-shadow:var(--shadow-soft);
+      position:relative;
+      overflow:hidden;
+      border:1px solid #eef2f7;
+    }
+
+    .stat-card::before{
+      content:'';
+      position:absolute;
+      top:0;
+      left:0;
+      right:0;
+      height:4px;
+      background:linear-gradient(90deg,var(--primary),var(--primary-2),var(--cyan));
+    }
+
+    .stat-top{
+      display:flex;
+      justify-content:space-between;
+      align-items:flex-start;
+      margin-bottom:14px;
+      gap:10px;
+    }
+
+    .stat-icon{
+      width:48px;
+      height:48px;
+      border-radius:16px;
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      background:#eff6ff;
+      font-size:20px;
+      flex-shrink:0;
+    }
+
+    .stat-label{
+      font-size:14px;
+      color:var(--muted);
+      margin-bottom:8px;
+      font-weight:600;
+    }
+
+    .stat-value{
+      font-size:30px;
+      font-weight:900;
+      color:var(--text);
+      margin-bottom:6px;
+      letter-spacing:-.04em;
+    }
+
+    .stat-sub{
+      font-size:13px;
+      color:var(--green);
+      line-height:1.6;
+    }
+
+    .card{
+      background:rgba(255,255,255,.94);
+      border-radius:26px;
+      padding:22px;
+      box-shadow:var(--shadow-soft);
+      border:1px solid #eef2f7;
+    }
+
+    .card-header{
+      display:flex;
+      justify-content:space-between;
+      align-items:center;
+      margin-bottom:18px;
+      gap:12px;
+      flex-wrap:wrap;
+    }
+
+    .card-title{
+      font-size:18px;
+      font-weight:800;
+    }
+
+    .toolbar{
+      display:grid;
+      grid-template-columns:1fr 180px 180px auto;
+      gap:12px;
+      margin-bottom:18px;
+    }
+
+    .toolbar input,.toolbar select{
+      width:100%;
+      height:48px;
+      border:1px solid #dbe2ea;
+      border-radius:16px;
+      padding:0 14px;
+      font-size:14px;
+      outline:none;
+      background:white;
+    }
+
+    .toolbar input:focus,.toolbar select:focus{
+      border-color:#93c5fd;
+      box-shadow:0 0 0 4px rgba(59,130,246,.08);
+    }
+
+    .add-btn{
+      border:none;
+      border-radius:16px;
+      padding:0 18px;
+      background:linear-gradient(135deg,var(--primary),var(--primary-2));
+      color:white;
+      font-weight:800;
+      cursor:pointer;
+      box-shadow:0 14px 28px rgba(59,130,246,.18);
+    }
+
+    .add-btn:hover{transform:translateY(-2px)}
+
+    .table-wrap{
+      overflow:auto;
+      border-radius:20px;
+      border:1px solid #eef2f7;
+    }
+
+    table{
+      width:100%;
+      border-collapse:collapse;
+      background:white;
+      min-width:1080px;
+    }
+
+    th,td{
+      padding:14px 16px;
+      text-align:left;
+      border-bottom:1px solid #eef2f7;
+      vertical-align:middle;
+    }
+
+    th{
+      background:#f8fafc;
+      font-size:13px;
+      text-transform:uppercase;
+      letter-spacing:.4px;
+      color:#64748b;
+      font-weight:800;
+    }
+
+    td{
+      font-size:14px;
+      color:#0f172a;
+    }
+
+    tr:hover td{background:#fbfdff}
+
+    .program-img{
+      width:68px;
+      height:46px;
+      object-fit:cover;
+      border-radius:12px;
+      border:1px solid #e5e7eb;
+      background:#f8fafc;
+    }
+
+    .program-name{
+      font-weight:800;
+      margin-bottom:4px;
+    }
+
+    .program-desc{
+      font-size:12px;
+      color:#64748b;
+      line-height:1.6;
+      max-width:280px;
+    }
+
+    .pill{
+      display:inline-flex;
+      padding:8px 12px;
+      border-radius:999px;
+      font-size:12px;
+      font-weight:800;
+    }
+
+    .pill.blue{background:#dbeafe;color:#1d4ed8}
+    .pill.green{background:#dcfce7;color:#15803d}
+    .pill.orange{background:#ffedd5;color:#c2410c}
+    .pill.gray{background:#e2e8f0;color:#475569}
+
+    .actions{
+      display:flex;
+      gap:8px;
+      flex-wrap:wrap;
+      opacity:0;
+      transition:.25s;
+    }
+
+    tr:hover .actions{opacity:1}
+
+    .icon-btn{
+      min-width:36px;
+      height:36px;
+      border:none;
+      border-radius:10px;
+      cursor:pointer;
+      background:#f8fafc;
+      font-size:16px;
+      transition:.2s;
+      padding:0 10px;
+    }
+
+    .icon-btn:hover{background:#eff6ff}
+
+    .empty-box{
+      padding:32px;
+      border-radius:18px;
+      border:1px dashed #cbd5e1;
+      background:#f8fafc;
+      text-align:center;
+      color:var(--muted);
+      font-size:14px;
+      line-height:1.8;
+    }
+
+    .modal{
+      position:fixed;
+      inset:0;
+      background:rgba(15,23,42,.36);
+      display:none;
+      align-items:center;
+      justify-content:center;
+      z-index:1000;
+      padding:24px;
+    }
+
+    .modal.show{display:flex}
+
+    .modal-box{
+      width:960px;
+      max-width:95vw;
+      background:white;
+      border-radius:28px;
+      padding:28px 32px 30px;
+      box-shadow:0 25px 60px rgba(15,23,42,.18);
+      position:relative;
+      z-index:1001;
+      max-height:92vh;
+      overflow:auto;
+    }
+
+    .modal-close{
+      position:absolute;
+      top:18px;
+      right:22px;
+      font-size:28px;
+      line-height:1;
+      color:#64748b;
+      cursor:pointer;
+      z-index:1002;
+    }
+
+    .modal-title{
+      font-size:22px;
+      font-weight:800;
+      color:#111827;
+      margin-bottom:6px;
+    }
+
+    .modal-subtitle{
+      font-size:14px;
+      color:#6b7280;
+      margin-bottom:24px;
+      line-height:1.7;
+    }
+
+    .steps{
+      display:flex;
+      justify-content:center;
+      align-items:center;
+      gap:16px;
+      margin-bottom:10px;
+    }
+
+    .step-circle{
+      width:44px;
+      height:44px;
+      border-radius:50%;
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      font-size:18px;
+      font-weight:700;
+      border:1.5px solid #d1d5db;
+      color:#6b7280;
+      background:white;
+    }
+
+    .step-circle.active{
+      border-color:#60a5fa;
+      background:#eff6ff;
+      color:#2563eb;
+    }
+
+    .step-line{
+      width:56px;
+      height:2px;
+      background:#e5e7eb;
+    }
+
+    .step-text{
+      display:flex;
+      justify-content:center;
+      gap:90px;
+      font-size:16px;
+      margin-bottom:26px;
+    }
+
+    .step-text .active-text{
+      font-weight:800;
+      color:#111827;
+    }
+
+    .step-text .inactive-text{
+      font-weight:600;
+      color:#9ca3af;
+    }
+
+    .cover-upload{
+      position:relative;
+      z-index:1;
+      border:1.5px dashed #60a5fa;
+      border-radius:20px;
+      height:180px;
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      flex-direction:column;
+      cursor:pointer;
+      margin-bottom:22px;
+      background:#fff;
+      transition:.2s;
+      overflow:hidden;
+    }
+
+    .cover-upload:hover{background:#f8fbff}
+
+    .cover-icon{
+      font-size:36px;
+      color:#9ca3af;
+      margin-bottom:8px;
+    }
+
+    .cover-text{
+      font-size:16px;
+      color:#9ca3af;
+      font-weight:600;
+    }
+
+    .file-name{
+      margin-top:8px;
+      font-size:13px;
+      color:#64748b;
+      text-align:center;
+      padding:0 12px;
+    }
+
+    .hidden-file{display:none}
+
+    .preview-image{
+      display:none;
+      width:100%;
+      height:100%;
+      object-fit:cover;
+      border-radius:16px;
+    }
+
+    .upload-placeholder{
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      flex-direction:column;
+      width:100%;
+      height:100%;
+    }
+
+    .form-group{margin-bottom:16px}
+
+    .form-group label{
+      display:block;
+      font-size:15px;
+      font-weight:700;
+      color:#374151;
+      margin-bottom:8px;
+    }
+
+    .required{color:#ef4444}
+
+    .form-group input,.form-group select,.form-group textarea{
+      width:100%;
+      min-height:52px;
+      padding:12px 14px;
+      border:1px solid #dbe2ea;
+      border-radius:14px;
+      font-size:15px;
+      outline:none;
+      background:white;
+    }
+
+    .form-group textarea{
+      min-height:96px;
+      resize:vertical;
+    }
+
+    .form-group input:focus,.form-group select:focus,.form-group textarea:focus{
+      border-color:#93c5fd;
+      box-shadow:0 0 0 4px rgba(59,130,246,.08);
+    }
+
+    .form-row{
+      display:grid;
+      grid-template-columns:1fr 1fr 1fr;
+      gap:14px;
+      margin-bottom:4px;
+    }
+
+    .modal-actions{
+      display:flex;
+      justify-content:flex-end;
+      gap:14px;
+      margin-top:8px;
+      flex-wrap:wrap;
+      position:relative;
+      z-index:20;
+      background:#fff;
+    }
+
+    .cancel-btn,.save-btn{
+      position:relative;
+      z-index:21;
+      pointer-events:auto;
+    }
+
+    .cancel-btn{
+      background:white;
+      color:#2563eb;
+      border:1px solid #93c5fd;
+      padding:12px 28px;
+      border-radius:14px;
+      font-weight:700;
+      cursor:pointer;
+    }
+
+    .save-btn{
+      background:#2563eb;
+      color:white;
+      border:none;
+      padding:12px 28px;
+      border-radius:14px;
+      font-weight:700;
+      cursor:pointer;
+    }
+
+    .save-btn:hover{background:#1d4ed8}
+
+    @media (max-width:1200px){
+      .stats{grid-template-columns:repeat(2,1fr)}
+      .hero{grid-template-columns:1fr}
+      .toolbar{grid-template-columns:1fr 1fr}
+      .add-btn{height:48px}
+    }
+
+    @media (max-width:768px){
+      body{flex-direction:column}
+      .sidebar{width:100%;height:auto;position:relative}
+      .main{padding:18px}
+      .topbar{flex-direction:column;align-items:flex-start}
+      .topbar-right{width:100%;justify-content:space-between}
+      .search-top{width:100%}
+      .search-top input{width:100%}
+      .stats,.toolbar,.form-row,.hero-mini-grid{grid-template-columns:1fr}
+      .modal-box{width:100%;padding:22px 18px;border-radius:20px}
+      .step-text{gap:34px;font-size:14px}
+      .page-title h1{font-size:24px}
+      .hero-content h2{font-size:28px}
+    }
+  </style>
+</head>
+<body>
+  <aside class="sidebar">
+    <div class="brand">
+      <div class="brand-mark">EF</div>
+      <div class="brand-text">
+        <strong>English for Kids</strong>
+        <span>Learning with joy</span>
+      </div>
+    </div>
+
+    <div class="menu-wrap">
+      <div class="active-bar" id="activeBar"></div>
+
+      <ul class="menu" id="menu">
+        <a href="trangchu.html"><li>Trang chủ</li></a>
+        <a href="QLchuongtrinh.html"><li class="active">QL Chương trình</li></a>
+        <a href="QLbai.html"><li>QL Bài học</li></a>
+
+        <li class="menu-parent" onclick="toggleSubmenu(this)">
+          <div style="display:flex;justify-content:space-between;align-items:center;">
+            <span>QL Người dùng</span>
+            <span class="arrow">▶</span>
+          </div>
+          <ul class="submenu">
+            <a href="hocsinh.html"><li>Học sinh</li></a>
+            <a href="giaovien.html"><li>Giáo viên</li></a>
+          </ul>
+        </li>
+
+        <a href="baocao.html"><li>Báo cáo</li></a>
+        <a href="caidat.html"><li>Cài đặt</li></a>
+      </ul>
+    </div>
+  </aside>
+
+  <main class="main">
+    <div class="topbar">
+      <div class="page-title">
+        <h1>Quản lý chương trình</h1>
+      </div>
+
+      <div class="topbar-right">
+        <div class="search-top">
+          <span>🔍</span>
+          <input type="text" id="searchTopInput" placeholder="Tìm chương trình theo tên, môn học, khối...">
+        </div>
+
+        <div class="avatar-box" onclick="toggleMenu(event)">
+          <div class="avatar">AD</div>
+          <div class="dropdown" id="dropdownMenu">
+            <button onclick="logout(); event.stopPropagation();">Đăng xuất</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <section class="hero">
+      <div class="hero-content">
+        <div class="hero-badge">📘 Quản lý chương trình học thông minh</div>
+        <h2>Tạo, chỉnh sửa và lưu trữ chương trình học dễ dàng hơn</h2>
+        <p>Bạn có thể thêm ảnh bìa, khối, môn học, cấp độ và mô tả cho từng chương trình.</p>
+
+        <div class="hero-actions">
+          <button class="hero-btn primary" onclick="openCreateModal()">+ Thêm chương trình</button>
+          <button class="hero-btn secondary" onclick="document.getElementById('searchTopInput').focus()">Tìm nhanh</button>
+        </div>
+      </div>
+
+      <div class="hero-side">
+        <div class="hero-mini-grid">
+          <div class="hero-mini">
+            <strong id="heroTotalPrograms">0</strong>
+            <span>Tổng chương trình hiện có</span>
+          </div>
+          <div class="hero-mini">
+            <strong id="heroMainSubject">-</strong>
+            <span>Môn học phổ biến nhất</span>
+          </div>
+          <div class="hero-mini">
+            <strong id="heroMainGrade">-</strong>
+            <span>Khối có nhiều chương trình nhất</span>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="stats">
+      <div class="stat-card">
+        <div class="stat-top">
+          <div>
+            <div class="stat-label">Tổng chương trình</div>
+            <div class="stat-value" id="totalPrograms">0</div>
+            <div class="stat-sub">Tất cả chương trình đã lưu</div>
+          </div>
+          <div class="stat-icon">📚</div>
+        </div>
+      </div>
+
+      <div class="stat-card">
+        <div class="stat-top">
+          <div>
+            <div class="stat-label">Khối nhiều nhất</div>
+            <div class="stat-value" id="topGrade">-</div>
+            <div class="stat-sub">Dựa trên số lượng chương trình</div>
+          </div>
+          <div class="stat-icon">🏫</div>
+        </div>
+      </div>
+
+      <div class="stat-card">
+        <div class="stat-top">
+          <div>
+            <div class="stat-label">Môn phổ biến</div>
+            <div class="stat-value" id="topSubject">-</div>
+            <div class="stat-sub">Môn học xuất hiện nhiều nhất</div>
+          </div>
+          <div class="stat-icon">🎯</div>
+        </div>
+      </div>
+
+      <div class="stat-card">
+        <div class="stat-top">
+          <div>
+            <div class="stat-label">Cấp độ chính</div>
+            <div class="stat-value" id="topLevel">-</div>
+            <div class="stat-sub">Cấp độ xuất hiện nhiều nhất</div>
+          </div>
+          <div class="stat-icon">⭐</div>
+        </div>
+      </div>
+    </section>
+
+    <section class="card">
+      <div class="card-header">
+        <div class="card-title">Danh sách chương trình</div>
+      </div>
+
+      <div class="toolbar">
+        <input type="text" id="searchInput" placeholder="Tìm theo tên chương trình hoặc mô tả...">
+        <select id="gradeFilter">
+          <option value="all">Tất cả khối</option>
+          <option value="Khối 1">Khối 1</option>
+          <option value="Khối 2">Khối 2</option>
+          <option value="Khối 3">Khối 3</option>
+          <option value="Khối 4">Khối 4</option>
+          <option value="Khối 5">Khối 5</option>
+        </select>
+        <select id="subjectFilter">
+          <option value="all">Tất cả môn</option>
+          <option value="Tiếng Anh">Tiếng Anh</option>
+          <option value="Toán">Toán</option>
+          <option value="Khoa học">Khoa học</option>
+        </select>
+        <button class="add-btn" onclick="openCreateModal()">+ Thêm chương trình</button>
+      </div>
+
+      <div id="tableContainer"></div>
+    </section>
+  </main>
+
+  <div class="modal" id="modal">
+    <div class="modal-box">
+      <div class="modal-close" onclick="closeModal()">×</div>
+      <div class="modal-title" id="modalTitle">Tạo chương trình</div>
+      <div class="modal-subtitle" id="modalSubtitle">Tạo chương trình học mới và lưu trực tiếp vào MySQL.</div>
+
+      <div class="steps">
+        <div class="step-circle active">1</div>
+        <div class="step-line"></div>
+        <div class="step-circle">2</div>
+      </div>
+
+      <div class="step-text">
+        <span class="active-text">Thông tin</span>
+        <span class="inactive-text">Bài học</span>
+      </div>
+
+      <label class="cover-upload" for="image">
+        <img id="previewImage" class="preview-image" src="" alt="Xem trước ảnh">
+        <div class="upload-placeholder" id="uploadPlaceholder">
+          <div class="cover-icon">⊕</div>
+          <div class="cover-text">Ảnh bìa chương trình</div>
+          <div class="file-name" id="fileName">Chưa chọn ảnh</div>
+        </div>
+      </label>
+
+      <input class="hidden-file" type="file" id="image" accept="image/*">
+
+      <div class="form-group">
+        <label>Tên chương trình <span class="required">(*)</span></label>
+        <input type="text" id="name" placeholder="Nhập tên chương trình">
+      </div>
+
+      <div class="form-row">
+        <div class="form-group">
+          <label>Khối <span class="required">(*)</span></label>
+          <select id="grade">
+            <option value="">Chọn khối</option>
+            <option>Khối 1</option>
+            <option>Khối 2</option>
+            <option>Khối 3</option>
+            <option>Khối 4</option>
+            <option>Khối 5</option>
+          </select>
+        </div>
+
+        <div class="form-group">
+          <label>Môn học <span class="required">(*)</span></label>
+          <select id="subject">
+            <option value="">Chọn môn học</option>
+            <option>Tiếng Anh</option>
+            <option>Toán</option>
+            <option>Khoa học</option>
+          </select>
+        </div>
+
+        <div class="form-group">
+          <label>Cấp độ <span class="required">(*)</span></label>
+          <select id="level">
+            <option>Cơ bản</option>
+            <option selected>Nâng cao</option>
+            <option>Chuyên sâu</option>
+          </select>
+        </div>
+      </div>
+
+      <div class="form-group">
+        <label>Mô tả chương trình</label>
+        <textarea id="description" placeholder="Nhập mô tả ngắn về chương trình học..."></textarea>
+      </div>
+
+      <div class="modal-actions">
+        <button type="button" class="cancel-btn" onclick="closeModal()">Huỷ bỏ</button>
+        <button type="button" class="save-btn" id="saveBtn" onclick="saveProgram()">Lưu chương trình</button>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    let currentPrograms = [];
+    let editingId = null;
+    let oldImagePath = '';
+
+    function esc(value){
+      return String(value ?? '')
+        .replace(/&/g,'&amp;')
+        .replace(/</g,'&lt;')
+        .replace(/>/g,'&gt;')
+        .replace(/"/g,'&quot;')
+        .replace(/'/g,'&#39;');
+    }
+
+    async function readPrograms(){
+      const res = await fetch('api/get_programs.php');
+      const text = await res.text();
+
+      try{
+        return JSON.parse(text);
+      }catch(e){
+        console.error('Lỗi parse JSON:', text);
+        alert('API get_programs.php đang lỗi. Mở Console để xem chi tiết.');
+        return [];
+      }
+    }
+
+    function toggleMenu(e){
+      e.stopPropagation();
+      document.getElementById('dropdownMenu').classList.toggle('show');
+    }
+
+    function logout(){
+      window.location.href = 'dangnhap.html';
+    }
+
+    function toggleSubmenu(menu){
+      menu.classList.toggle('active');
+      const arrow = menu.querySelector('.arrow');
+      if(arrow){
+        arrow.style.transform = menu.classList.contains('active') ? 'rotate(90deg)' : 'rotate(0deg)';
+      }
+    }
+
+    const menuItems = document.querySelectorAll('.menu li');
+    const activeBar = document.getElementById('activeBar');
+
+    function moveBar(element){
+      if(!element || !activeBar) return;
+      activeBar.style.top = element.offsetTop + 'px';
+      activeBar.style.height = element.offsetHeight + 'px';
+    }
+
+    menuItems.forEach(item => {
+      item.addEventListener('click', function(){
+        menuItems.forEach(i => i.classList.remove('active'));
+        this.classList.add('active');
+        moveBar(this);
+      });
+    });
+
+    function openCreateModal(){
+      editingId = null;
+      oldImagePath = '';
+      document.getElementById('modalTitle').innerText = 'Tạo chương trình';
+      document.getElementById('modalSubtitle').innerText = 'Tạo chương trình học mới và lưu trực tiếp vào MySQL.';
+      document.getElementById('saveBtn').innerText = 'Lưu chương trình';
+      document.getElementById('modal').classList.add('show');
+    }
+
+    function openEditModal(id){
+      const item = currentPrograms.find(program => Number(program.id) === Number(id));
+      if(!item) return;
+
+      editingId = Number(id);
+      oldImagePath = item.img || '';
+
+      document.getElementById('modalTitle').innerText = 'Chỉnh sửa chương trình';
+      document.getElementById('modalSubtitle').innerText = 'Cập nhật thông tin chương trình và lưu lại vào MySQL.';
+      document.getElementById('saveBtn').innerText = 'Cập nhật chương trình';
+
+      document.getElementById('name').value = item.name || '';
+      document.getElementById('grade').value = item.grade || '';
+      document.getElementById('subject').value = item.subject || '';
+      document.getElementById('level').value = item.level || 'Nâng cao';
+      document.getElementById('description').value = item.description || '';
+
+      const previewImage = document.getElementById('previewImage');
+      const uploadPlaceholder = document.getElementById('uploadPlaceholder');
+      document.getElementById('fileName').innerText = item.img ? 'Ảnh hiện tại' : 'Chưa chọn ảnh';
+
+      if(item.img){
+        previewImage.src = item.img;
+        previewImage.style.display = 'block';
+        uploadPlaceholder.style.display = 'none';
+      }else{
+        previewImage.src = '';
+        previewImage.style.display = 'none';
+        uploadPlaceholder.style.display = 'flex';
+      }
+
+      document.getElementById('modal').classList.add('show');
+    }
+
+    function resetForm(){
+      editingId = null;
+      oldImagePath = '';
+      document.getElementById('modalTitle').innerText = 'Tạo chương trình';
+      document.getElementById('modalSubtitle').innerText = 'Tạo chương trình học mới và lưu trực tiếp vào MySQL.';
+      document.getElementById('saveBtn').innerText = 'Lưu chương trình';
+      document.getElementById('image').value = '';
+      document.getElementById('fileName').innerText = 'Chưa chọn ảnh';
+      document.getElementById('name').value = '';
+      document.getElementById('grade').value = '';
+      document.getElementById('subject').value = '';
+      document.getElementById('level').value = 'Nâng cao';
+      document.getElementById('description').value = '';
+      document.getElementById('previewImage').src = '';
+      document.getElementById('previewImage').style.display = 'none';
+      document.getElementById('uploadPlaceholder').style.display = 'flex';
+    }
+
+    function closeModal(){
+      document.getElementById('modal').classList.remove('show');
+      resetForm();
+    }
+
+    document.getElementById('image').addEventListener('change', function(){
+      const file = this.files[0];
+      const fileName = document.getElementById('fileName');
+      const previewImage = document.getElementById('previewImage');
+      const uploadPlaceholder = document.getElementById('uploadPlaceholder');
+
+      if(file){
+        fileName.innerText = file.name;
+        const reader = new FileReader();
+        reader.onload = function(e){
+          previewImage.src = e.target.result;
+          previewImage.style.display = 'block';
+          uploadPlaceholder.style.display = 'none';
+        };
+        reader.readAsDataURL(file);
+      }else if(oldImagePath){
+        fileName.innerText = 'Ảnh hiện tại';
+        previewImage.src = oldImagePath;
+        previewImage.style.display = 'block';
+        uploadPlaceholder.style.display = 'none';
+      }else{
+        fileName.innerText = 'Chưa chọn ảnh';
+        previewImage.src = '';
+        previewImage.style.display = 'none';
+        uploadPlaceholder.style.display = 'flex';
+      }
+    });
+
+    async function saveProgram(){
+      const name = document.getElementById('name').value.trim();
+      const grade = document.getElementById('grade').value;
+      const subject = document.getElementById('subject').value;
+      const level = document.getElementById('level').value;
+      const description = document.getElementById('description').value.trim();
+      const file = document.getElementById('image').files[0];
+
+      if(!name || !grade || !subject || !level){
+        alert('Vui lòng nhập đầy đủ thông tin bắt buộc!');
+        return;
+      }
+
+      const formData = new FormData();
+      formData.append('name', name);
+      formData.append('grade', grade);
+      formData.append('subject', subject);
+      formData.append('level', level);
+      formData.append('description', description);
+
+      if(file){
+        formData.append('image', file);
+      }
+
+      let url = 'api/save_program.php';
+
+      if(editingId !== null){
+        url = 'api/update_program.php';
+        formData.append('id', editingId);
+        formData.append('old_img', oldImagePath);
+      }
+
+      try{
+        const res = await fetch(url, {
+          method: 'POST',
+          body: formData
+        });
+
+        const text = await res.text();
+        console.log('Kết quả API:', text);
+
+        let data;
+        try{
+          data = JSON.parse(text);
+        }catch(e){
+          alert('API trả về lỗi. Mở Console để xem chi tiết.');
+          return;
+        }
+
+        if(data.success){
+          closeModal();
+          await renderAll();
+          alert(editingId !== null ? 'Đã cập nhật chương trình thành công!' : 'Đã lưu chương trình thành công!');
+        }else{
+          alert(data.message || 'Thao tác thất bại');
+        }
+      }catch(error){
+        console.error(error);
+        alert('Không gửi được dữ liệu lên server.');
+      }
+    }
+
+    async function deleteProgram(id){
+      if(!confirm('Bạn có chắc chắn muốn xóa chương trình này không?')) return;
+
+      const formData = new FormData();
+      formData.append('id', id);
+
+      try{
+        const res = await fetch('api/delete_program.php', {
+          method: 'POST',
+          body: formData
+        });
+
+        const text = await res.text();
+        const data = JSON.parse(text);
+
+        if(data.success){
+          await renderAll();
+        }else{
+          alert(data.message || 'Xóa thất bại');
+        }
+      }catch(error){
+        console.error(error);
+        alert('Không xóa được dữ liệu.');
+      }
+    }
+
+    function editProgram(id){
+      openEditModal(id);
+    }
+
+    // ADMIN CHỈ XEM
+    function goToViewInput(id){
+      window.location.href = `nhaplieu.html?program_id=${id}&source=admin&mode=view`;
+    }
+
+    // ADMIN ĐƯỢC NHẬP LIỆU / CHỈNH SỬA
+    function goToEditInput(id){
+      window.location.href = `nhaplieu.html?program_id=${id}&source=admin&mode=edit`;
+    }
+
+    function getTopValue(list, key, fallback='-'){
+      if(!list.length) return fallback;
+      const counter = {};
+      list.forEach(item => {
+        const value = item[key] || fallback;
+        counter[value] = (counter[value] || 0) + 1;
+      });
+      return Object.entries(counter).sort((a,b) => b[1] - a[1])[0][0];
+    }
+
+    async function renderStats(){
+      const list = await readPrograms();
+      currentPrograms = list;
+
+      document.getElementById('totalPrograms').innerText = list.length;
+      document.getElementById('topGrade').innerText = getTopValue(list, 'grade');
+      document.getElementById('topSubject').innerText = getTopValue(list, 'subject');
+      document.getElementById('topLevel').innerText = getTopValue(list, 'level');
+      document.getElementById('heroTotalPrograms').innerText = list.length;
+      document.getElementById('heroMainSubject').innerText = getTopValue(list, 'subject');
+      document.getElementById('heroMainGrade').innerText = getTopValue(list, 'grade');
+    }
+
+    async function getFilteredPrograms(){
+      const keyword = document.getElementById('searchInput').value.toLowerCase().trim();
+      const topKeyword = document.getElementById('searchTopInput').value.toLowerCase().trim();
+      const gradeFilter = document.getElementById('gradeFilter').value;
+      const subjectFilter = document.getElementById('subjectFilter').value;
+      const list = await readPrograms();
+
+      currentPrograms = list;
+
+      return list.filter(item => {
+        const text = `${item.name || ''} ${item.subject || ''} ${item.grade || ''} ${item.description || ''}`.toLowerCase();
+        const keywordMatch = !keyword || text.includes(keyword);
+        const topKeywordMatch = !topKeyword || text.includes(topKeyword);
+        const gradeMatch = gradeFilter === 'all' || item.grade === gradeFilter;
+        const subjectMatch = subjectFilter === 'all' || item.subject === subjectFilter;
+        return keywordMatch && topKeywordMatch && gradeMatch && subjectMatch;
+      }).sort((a,b) => Number(b.id) - Number(a.id));
+    }
+
+    async function renderTable(){
+      const list = await getFilteredPrograms();
+      const container = document.getElementById('tableContainer');
+
+      if(!list.length){
+        container.innerHTML = '<div class="empty-box">Chưa có chương trình phù hợp. Hãy thêm chương trình mới hoặc thay đổi bộ lọc tìm kiếm.</div>';
+        return;
+      }
+
+      container.innerHTML = `
+        <div class="table-wrap">
+          <table>
+            <thead>
+              <tr>
+                <th>Ảnh</th>
+                <th>Tên chương trình</th>
+                <th>Ngày tạo</th>
+                <th>Khối</th>
+                <th>Môn học</th>
+                <th>Cấp độ</th>
+                <th>Chức năng</th>
+              </tr>
+            </thead>
+            <tbody>
+              ${list.map(item => `
+                <tr>
+                  <td><img src="${esc(item.img || '')}" class="program-img" alt="Ảnh chương trình"></td>
+                  <td>
+                    <div class="program-name">${esc(item.name || 'Chương trình chưa đặt tên')}</div>
+                    <div class="program-desc">${esc(item.description || 'Chưa có mô tả chương trình.')}</div>
+                  </td>
+                  <td>${esc(item.createdAt || 'Chưa rõ')}</td>
+                  <td><span class="pill blue">${esc(item.grade || 'Chưa rõ')}</span></td>
+                  <td>${esc(item.subject || 'Chưa rõ')}</td>
+                  <td><span class="pill ${item.level === 'Cơ bản' ? 'green' : item.level === 'Nâng cao' ? 'blue' : 'orange'}">${esc(item.level || 'Nâng cao')}</span></td>
+                  <td>
+                    <div class="actions">
+                      <button class="icon-btn" title="Xem chi tiết nhập liệu" onclick="goToViewInput(${item.id})">👁</button>
+                      <button class="icon-btn" title="Sửa chương trình" onclick="editProgram(${item.id})">✏</button>
+                      <button class="icon-btn" title="Nhập liệu và chỉnh sửa nội dung" onclick="goToEditInput(${item.id})">📝</button>
+                      <button class="icon-btn" title="Xóa chương trình" onclick="deleteProgram(${item.id})">🗑</button>
+                    </div>
+                  </td>
+                </tr>
+              `).join('')}
+            </tbody>
+          </table>
+        </div>
+      `;
+    }
+
+    async function renderAll(){
+      await renderStats();
+      await renderTable();
+    }
+
+    document.getElementById('searchInput').addEventListener('input', renderTable);
+    document.getElementById('searchTopInput').addEventListener('input', renderTable);
+    document.getElementById('gradeFilter').addEventListener('change', renderTable);
+    document.getElementById('subjectFilter').addEventListener('change', renderTable);
+
+    window.onload = async function(){
+      moveBar(document.querySelector('.menu li.active'));
+      await renderAll();
+    };
+
+    document.addEventListener('click', function(e){
+      if(!e.target.closest('.avatar-box')){
+        document.getElementById('dropdownMenu').classList.remove('show');
+      }
+
+      if(e.target === document.getElementById('modal')){
+        closeModal();
+      }
+    });
+  </script>
+</body>
+</html>
