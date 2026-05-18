@@ -388,7 +388,7 @@ async function dangNhap() {
 if (account === "hs001" && password === "123456") {
   localStorage.setItem("role", "hocsinh");
   localStorage.setItem("user_name", "Học sinh test");
-  localStorage.setItem("student_code", "hs001");
+  localStorage.setItem("student_code", "hs1");
   localStorage.setItem("logged_in", "1");
 
   success.innerText = "✅ Đăng nhập học sinh test thành công! Đang chuyển hướng...";
@@ -396,7 +396,7 @@ if (account === "hs001" && password === "123456") {
   error.style.display = "none";
 
   setTimeout(() => {
-    window.location.href = "hocsinh.html";
+    window.location.href = "trangchuhocsinh.html";
   }, 900);
   return;
 }
@@ -413,7 +413,7 @@ if (account === "giaovientest" && password === "123456") {
   error.style.display = "none";
 
   setTimeout(() => {
-    window.location.href = "giaovientest.html";
+    window.location.href = "trangchugiaovien.html";
   }, 900);
   return;
 }
