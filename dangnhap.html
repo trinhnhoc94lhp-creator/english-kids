@@ -384,6 +384,39 @@ async function dangNhap() {
     }, 900);
     return;
   }
+  // TÀI KHOẢN HỌC SINH TEST
+if (account === "hs001" && password === "123456") {
+  localStorage.setItem("role", "hocsinh");
+  localStorage.setItem("user_name", "Học sinh test");
+  localStorage.setItem("student_code", "hs001");
+  localStorage.setItem("logged_in", "1");
+
+  success.innerText = "✅ Đăng nhập học sinh test thành công! Đang chuyển hướng...";
+  success.style.display = "block";
+  error.style.display = "none";
+
+  setTimeout(() => {
+    window.location.href = "hocsinh.html";
+  }, 900);
+  return;
+}
+
+// TÀI KHOẢN GIÁO VIÊN TEST
+if (account === "giaovientest" && password === "123456") {
+  localStorage.setItem("role", "giaovien");
+  localStorage.setItem("user_name", "Giáo viên test");
+  localStorage.setItem("teacher_code", "giaovientest");
+  localStorage.setItem("logged_in", "1");
+
+  success.innerText = "✅ Đăng nhập giáo viên test thành công! Đang chuyển hướng...";
+  success.style.display = "block";
+  error.style.display = "none";
+
+  setTimeout(() => {
+    window.location.href = "giaovientest.html";
+  }, 900);
+  return;
+}
 
   // CÁC TÀI KHOẢN KHÁC GIỮ NGUYÊN
   try {
